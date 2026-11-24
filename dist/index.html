@@ -8,6 +8,7 @@
   <title>Metorbike — Racing Club</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./upgrade.css">
 </head>
 <body>
   <div id="scene" aria-label="3D-Ansicht des Motorrads und der Rennstrecke"></div>
@@ -22,7 +23,15 @@
       <div class="hero-copy"><div class="eyebrow"><span class="tiny-flag">▧</span> DER METORBIKE RACING CLUB</div><h1>RIDE YOUR<br><span>STYLE.</span><span class="outline">RACE YOUR WAY.</span></h1><p>Hamburger Café-Racer. Zwei Welten.<br>Dein nächster Adrenalinkick.</p><div class="hero-tags"><span>100 % ELEKTRISCH</span><span>100 % ARCADE</span></div></div>
       <div class="bike-annotation"><span class="annotation-line"></span><span><small>DEIN RIDE</small><strong id="hero-bike-name">Classic · Racing Green</strong><em>Café-Racer aus Hamburg</em></span></div>
       <span class="hero-watermark" aria-hidden="true">01</span>
-      <div class="bike-orbit-note"><span>↔</span> DEIN BIKE. DEIN STYLE.</div>
+      <div id="bike-viewer" tabindex="0" role="group" aria-label="Motorrad drehen: ziehen oder Pfeiltasten verwenden"></div>
+      <div class="rotation-controls"><button id="rotate-left" aria-label="Bike nach links drehen">↶</button><label for="bike-rotation">360° ANSICHT</label><input id="bike-rotation" aria-label="Bike-Drehwinkel" type="range" min="0" max="360" value="0"><button id="rotate-right" aria-label="Bike nach rechts drehen">↷</button><button id="rotate-reset" aria-label="Bike-Ansicht zurücksetzen">↺</button></div>
+    </section>
+    <section class="config-bar" aria-label="Motorrad konfigurieren">
+      <div class="power-config"><span class="config-label">DEINE LEISTUNGSKLASSE</span><div class="power-options" role="group" aria-label="Leistungsklasse"><button data-power="2" aria-pressed="true"><strong>2 kW</strong><span>CLASSIC</span></button><button data-power="4" aria-pressed="false"><strong>4 kW</strong><span>SPORT</span></button></div></div>
+      <label class="config-field" for="seat-select"><span class="config-label">SITZBANK</span><select id="seat-select"><option value="single">Einzelsitz</option><option value="hump">Höckersitz</option><option value="double">Doppelsitz</option></select></label>
+      <label class="config-field" for="leather-select"><span class="config-label">LEDERFARBE</span><select id="leather-select"><option value="brown">Dunkelbraun</option><option value="cognac">Cognac</option><option value="black">Schwarz</option></select></label>
+      <label class="config-field" for="passenger-select"><span class="config-label">BEIFAHRER</span><select id="passenger-select"><option value="solo">Solo unterwegs</option><option value="passenger">Zu zweit fahren</option></select></label>
+      <p id="config-note" aria-live="polite">2 kW · Entspannt einsteigen.<span>Arcade-Fahrwerte · eigene Bestzeiten je Klasse</span></p>
     </section>
     <section class="race-setup" aria-label="Rennen konfigurieren">
       <div class="track-section"><div class="section-label"><span>01 / WÄHLE DEINE STRECKE</span><span class="micro">ZWEI WELTEN. VOLLGAS.</span></div><div class="track-grid">
@@ -39,7 +48,7 @@
     <div class="position-panel"><strong id="position">6<span>/6</span></strong><span>POSITION</span></div>
     <div class="time-panel"><span>RENNZEIT</span><strong id="race-time">00:00.00</strong><small id="best-time">BESTE ZEIT —</small></div>
     <canvas id="minimap" width="220" height="170" aria-label="Streckenkarte mit Fahrerpositionen"></canvas>
-    <div id="countdown" aria-live="polite"></div><div id="race-message" aria-live="polite"></div>
+    <div id="countdown" aria-live="polite"></div><div id="race-message" aria-live="polite"></div><div id="parrot-caption" role="status" class="hidden"><span>🦜 PAPAGEIEN-BERGUNG</span><strong>„Haha, du Lappen!“</strong></div><div id="stunt-label" aria-live="polite"></div>
     <div class="speed-panel"><strong id="speed">0</strong><span>KM/H</span><div class="speed-bar"><span id="speed-fill"></span></div></div>
     <div class="boost-panel"><span><b>⚡</b> BOOST <small>SHIFT / LEERTASTE</small></span><div class="boost-bar"><span id="boost-fill"></span></div></div>
     <div class="race-key-hint"><kbd>W</kbd> Gas <kbd>S</kbd> Bremse <kbd>A</kbd><kbd>D</kbd> Lenken <kbd>R</kbd> Zurücksetzen <kbd>Esc</kbd> Pause</div>
@@ -47,7 +56,7 @@
   </section>
   <div id="pause-overlay" class="overlay hidden"><div class="dialog pause-dialog"><span class="eyebrow">KURZER BOXENSTOPP</span><h2>Durchatmen.<br>Weiterfahren.</h2><p>Dein Rennen wartet auf dich.</p><button id="resume-button" class="primary-button">WEITERFAHREN <span>↗</span></button><button id="restart-button" class="secondary-button">Rennen neu starten</button><button id="garage-button" class="text-button">Zurück zur Garage</button></div></div>
   <div id="results-overlay" class="overlay hidden"><div class="dialog results-dialog"><span class="eyebrow">DIE ZIELLINIE GEHÖRT DIR</span><div id="finish-place">1<span>. PLATZ</span></div><h2 id="finish-title">Was für ein Ride.</h2><div class="result-stats"><div><span>DEINE ZEIT</span><strong id="finish-time"></strong></div><div><span>BESTE RUNDE</span><strong id="finish-lap"></strong></div></div><p id="record-note"></p><div id="leaderboard"></div><button id="again-button" class="primary-button">NOCH EIN RENNEN <span>↗</span></button><button id="finish-garage-button" class="secondary-button">Zurück zur Garage</button></div></div>
-  <dialog id="help-dialog"><button id="close-help" class="icon-button" aria-label="Anleitung schließen">×</button><span class="eyebrow">DEIN ERSTES RENNEN?</span><h2>Einsteigen.<br>Aufdrehen.</h2><p>Überhole fünf Racer und fahre drei Runden. Fahre über die leuchtenden Boost-Felder für einen Extra-Kick.</p><div class="help-columns"><div><h3>Am Computer</h3><p><kbd>W</kbd> Gas · <kbd>S</kbd> Bremsen<br><kbd>A</kbd> <kbd>D</kbd> Lenken<br><kbd>Shift</kbd> / <kbd>Leertaste</kbd> Boost<br><kbd>R</kbd> Zurück auf die Strecke<br><kbd>Esc</kbd> / <kbd>P</kbd> Pause</p></div><div><h3>Am Smartphone</h3><p>Halte dein Handy quer.<br><b>Linker Daumen:</b> Lenkpad schieben.<br><b>Rechter Daumen:</b> Gas gedrückt halten, zum Bremsen oder Boosten wechseln.</p></div></div><p class="help-tip">Tipp: Vor engen Kurven kurz bremsen. Auf der Sternenallee bringen dich die Leitplanken sicher zurück.</p><button id="help-ready" class="primary-button">ALLES KLAR <span>↗</span></button></dialog>
+  <dialog id="help-dialog"><button id="close-help" class="icon-button" aria-label="Anleitung schließen">×</button><span class="eyebrow">DEIN ERSTES RENNEN?</span><h2>Einsteigen.<br>Aufdrehen.</h2><p>Überhole fünf Racer und fahre drei Runden. Fahre über die leuchtenden Boost-Felder für einen Extra-Kick.</p><div class="help-columns"><div><h3>Am Computer</h3><p><kbd>W</kbd> Gas · <kbd>S</kbd> Bremsen<br><kbd>A</kbd> <kbd>D</kbd> Lenken<br><kbd>Shift</kbd> / <kbd>Leertaste</kbd> Boost<br><kbd>R</kbd> Zurück auf die Strecke<br><kbd>Esc</kbd> / <kbd>P</kbd> Pause</p></div><div><h3>Am Smartphone</h3><p>Halte dein Handy quer.<br><b>Linker Daumen:</b> Lenkpad schieben.<br><b>Rechter Daumen:</b> Gas gedrückt halten, zum Bremsen oder Boosten wechseln.</p></div></div><p class="help-tip">Tipp: Vor engen Kurven kurz bremsen. Boost = Wheelie, Vollbremsung = Stoppie. Vorsicht auf der Sternenallee: keine Leitplanken! Ein Papagei sammelt dich nach einem Sturz wieder ein.</p><button id="help-ready" class="primary-button">ALLES KLAR <span>↗</span></button></dialog>
   <div id="rotate-prompt"><span>↻</span><h2>Mehr Platz für Vollgas.</h2><p>Dreh dein Handy ins Querformat.<br>Links lenken, rechts Gas geben.</p></div>
   <div id="webgl-error" class="overlay hidden"><div class="dialog"><h2>Dein Bike braucht 3D.</h2><p>Aktiviere die Hardwarebeschleunigung oder öffne das Spiel in einem aktuellen Chrome, Edge, Firefox oder Safari.</p><button class="primary-button" onclick="location.reload()">ERNEUT VERSUCHEN ↗</button></div></div>
   <script type="module" src="./game.js"></script>

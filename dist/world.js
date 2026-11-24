@@ -1,5 +1,7 @@
 import * as THREE from './assets/three.module.js';
 import {wrap} from './race-core.mjs';
+import {makeBike,BIKE_COLORS,animateBike,makeParrot,animateParrot} from './bike.js';
+export {makeBike,BIKE_COLORS,makeParrot,animateParrot};
 export {THREE};
 const V = (x,y,z) => new THREE.Vector3(x,y,z);
 const materials = new Map();
@@ -13,67 +15,6 @@ function box(parent,w,h,d,color,x=0,y=0,z=0,metal=0) { return mesh(new THREE.Box
 function sphere(parent,r,color,x,y,z,sx=1,sy=1,sz=1) { const m=mesh(new THREE.SphereGeometry(r,24,16),mat(color,.18,.35),parent,x,y,z);m.scale.set(sx,sy,sz);return m; }
 function rod(parent,a,b,r,color,metal=.7) {const va=V(...a),vb=V(...b),m=mesh(new THREE.CylinderGeometry(r,r,va.distanceTo(vb),10),mat(color,metal,.3),parent);m.position.copy(va).add(vb).multiplyScalar(.5);m.quaternion.setFromUnitVectors(V(0,1,0),vb.sub(va).normalize());return m;}
 function labelTexture(text,bg='#f2efe4',fg='#17333c',size=512) {const c=document.createElement('canvas');c.width=size;c.height=size/4;const ctx=c.getContext('2d');ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle=fg;ctx.font=`800 ${size/13}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,size/2,size/8);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;}
-export const BIKE_COLORS = [{name:'Racing Green',hex:0x486753},{name:'Aurum Gold',hex:0xc9933e},{name:'Burnt Orange',hex:0xc4513c},{name:'Midnight Black',hex:0x2d3740}];
-export function makeBike(colorIndex=0,rider=false) {
-  const g=new THREE.Group(),body=new THREE.Group();g.add(body);g.userData.body=body;
-  const paint=new THREE.MeshStandardMaterial({color:BIKE_COLORS[colorIndex].hex,metalness:.55,roughness:.24});g.userData.paint=paint;
-  const chrome=0xc5ccca,black=0x202629;
-  g.userData.wheels=[];
-  for(const z of [-.92,.98]){
-    const wheel=new THREE.Group();wheel.position.set(0,.49,z);body.add(wheel);g.userData.wheels.push(wheel);
-    const tire=mesh(new THREE.TorusGeometry(.373,.115,12,36),mat(0x171d20,0,.92),wheel);tire.rotation.y=Math.PI/2;
-    const rim=mesh(new THREE.TorusGeometry(.3,.025,8,32),mat(chrome,.85,.21),wheel);rim.rotation.y=Math.PI/2;
-    for(let i=0;i<12;i++){const a=i*Math.PI/6;rod(wheel,[0,0,0],[0,Math.sin(a)*.31,Math.cos(a)*.31],.009,chrome);}
-    const hub=mesh(new THREE.CylinderGeometry(.1,.1,.2,16),mat(chrome,.8,.3),wheel);hub.rotation.z=Math.PI/2;
-    const disc=mesh(new THREE.CylinderGeometry(.23,.23,.018,24),mat(0x8d9696,.85,.4),wheel,.13,0,0);disc.rotation.z=Math.PI/2;
-    for(let i=0;i<20;i++){const a=i*Math.PI/10;const tread=box(wheel,.14,.012,.04,0x2b3131,0,Math.sin(a)*.487,Math.cos(a)*.487);tread.rotation.x=-a;}
-  }
-  rod(body,[0,.5,-.92],[0,1.12,-.3],.045,black);rod(body,[0,.5,-.92],[0,.6,.45],.045,black);rod(body,[0,1.12,-.3],[0,.6,.45],.04,black);rod(body,[0,1.12,-.3],[0,1.25,.52],.04,black);rod(body,[0,.6,.45],[0,1.25,.52],.045,black);
-  for(const x of [-.16,.16]){rod(body,[x,.5,.98],[x,1.48,.65],.035,chrome);rod(body,[x,.5,-.92],[x,1.1,-.6],.045,0x343c3e);rod(body,[x,.56,-.85],[x,1.04,-.58],.022,chrome);}
-  const battery=box(body,.48,.42,.5,black,0,.78,-.05);battery.rotation.x=-.1;
-  for(let i=0;i<6;i++)box(body,.51,.019,.49,0x555d5d,0,.65+i*.053,-.05,.6);
-  const tank=mesh(new THREE.SphereGeometry(1,32,20),paint,body,0,1.24,.23);tank.scale.set(.31,.255,.53);
-  const cap=mesh(new THREE.CylinderGeometry(.061,.061,.02,20),mat(chrome,.85,.15),body,0,1.49,.16);
-  const seat=box(body,.48,.13,.72,0x6b4937,0,1.18,-.51);seat.geometry=new THREE.BoxGeometry(.48,.13,.72,1,1,1);
-  sphere(body,.23,0x6b4937,0,1.18,-.82,1,.28,.7);
-  for(let i=0;i<8;i++)box(body,.49,.008,.012,0x8b6650,0,1.251,-.83+i*.087);
-  box(body,.26,.05,.56,black,0,1.06,-.6);
-  const backLight=box(body,.2,.075,.06,0xdd3c32,0,1.04,-1.06);backLight.material=mat(0x8f2320,.2,.3,0xcf3621);
-  const headlight=mesh(new THREE.CylinderGeometry(.195,.19,.18,28),mat(chrome,.8,.18),body,0,1.35,.94);headlight.rotation.x=Math.PI/2;
-  const light=mesh(new THREE.CylinderGeometry(.161,.161,.012,28),mat(0xffefc2,.1,.2,0xffdf9a),body,0,1.35,1.035);light.rotation.x=Math.PI/2;
-  rod(body,[-.48,1.45,.56],[.48,1.45,.56],.025,chrome);rod(body,[-.48,1.45,.56],[-.49,1.45,.72],.035,black);rod(body,[.48,1.45,.56],[.49,1.45,.72],.035,black);
-  rod(body,[-.42,1.45,.6],[-.49,1.7,.64],.012,chrome);rod(body,[.42,1.45,.6],[.49,1.7,.64],.012,chrome);
-  for(const x of [-.5,.5]){const mirror=mesh(new THREE.CylinderGeometry(.072,.072,.025,20),mat(chrome,.9,.15),body,x,1.7,.64);mirror.rotation.x=Math.PI/2;}
-  for(const z of [-.92,.98]) {const f=mesh(new THREE.TorusGeometry(.5,.028,8,24,Math.PI*.85),paint,body,0,.49,z);f.rotation.y=Math.PI/2;f.rotation.z=.24;}
-  rod(body,[-.29,.58,-.25],[.29,.58,-.25],.035,black);
-  const tx=labelTexture('METORBIKE','#486753','#f3f0e0');tx.needsUpdate=true;
-  for(const side of [-1,1]){const badge=mesh(new THREE.PlaneGeometry(.59,.145),new THREE.MeshBasicMaterial({map:tx,transparent:false}),body,side*.294,1.25,.21);badge.rotation.y=side*Math.PI/2;}
-  const shadow=mesh(new THREE.PlaneGeometry(1.6,3.3),new THREE.MeshBasicMaterial({map:shadowTexture(),transparent:true,depthWrite:false,opacity:.4}),g,0,.015,0);shadow.rotation.x=-Math.PI/2;
-  if(rider){
-    const jacket=colorIndex===3?0x424b4b:0xe4dfcc;
-    const torso=box(body,.53,.64,.3,jacket,0,1.65,-.25);torso.rotation.x=.37;
-    sphere(body,.235,BIKE_COLORS[colorIndex].hex,0,2.12,-.02,1,1.08,1.06);
-    const visor=sphere(body,.24,0x152c39,0,2.12,.07,1,.42,.8);visor.material=mat(0x203644,.7,.15);
-    rod(body,[-.25,1.88,-.13],[-.36,1.58,.23],.105,jacket,.05);rod(body,[.25,1.88,-.13],[.36,1.58,.23],.105,jacket,.05);
-    rod(body,[-.36,1.58,.23],[-.47,1.46,.59],.072,jacket,.05);rod(body,[.36,1.58,.23],[.47,1.46,.59],.072,jacket,.05);
-    for(const x of [-.25,.25]){rod(body,[x,1.38,-.4],[x*1.6,.99,.04],.12,0x313d47,.05);rod(body,[x*1.6,.99,.04],[x*1.3,.59,-.24],.09,0x313d47,.05);box(body,.15,.13,.28,black,x*1.3,.56,-.15);}
-  }
-  // Consolidate static parts by material. Detailed bikes stay inexpensive on phones.
-  for(const wheel of g.userData.wheels)mergeStaticParts(wheel);
-  mergeStaticParts(body);
-  return g;
-}
-function mergeStaticParts(parent){
-  const groups=new Map();
-  for(const child of [...parent.children]){if(!child.isMesh||Array.isArray(child.material))continue;const key=child.material.uuid;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(child);}
-  for(const parts of groups.values()){
-    if(parts.length<2)continue;const positions=[],normals=[],uvs=[];
-    for(const part of parts){part.updateMatrix();const geo=part.geometry.index?part.geometry.toNonIndexed():part.geometry.clone();geo.applyMatrix4(part.matrix);const pos=geo.getAttribute('position'),normal=geo.getAttribute('normal'),uv=geo.getAttribute('uv');for(let i=0;i<pos.count;i++){positions.push(pos.getX(i),pos.getY(i),pos.getZ(i));normals.push(normal ? normal.getX(i) : 0,normal ? normal.getY(i) : 1,normal ? normal.getZ(i) : 0);uvs.push(uv?.getX(i)||0,uv?.getY(i)||0);}geo.dispose();parent.remove(part);part.geometry.dispose();}
-    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(normals,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));mesh(geo,parts[0].material,parent);
-  }
-}
-let shadowMap;
-function shadowTexture(){if(shadowMap)return shadowMap;const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d');const gr=ctx.createRadialGradient(64,64,3,64,64,64);gr.addColorStop(0,'#000b');gr.addColorStop(1,'#0000');ctx.fillStyle=gr;ctx.fillRect(0,0,128,128);return shadowMap=new THREE.CanvasTexture(c);}
 export function createShowroom() {
   const scene=new THREE.Scene();scene.background=new THREE.Color(0xf1f0e9);scene.fog=new THREE.Fog(0xf1f0e9,16,45);
   scene.add(new THREE.HemisphereLight(0xffffff,0xb0b7a6,3));const sun=new THREE.DirectionalLight(0xfff4d8,4);sun.position.set(4,8,5);scene.add(sun);const rim=new THREE.DirectionalLight(0xb3c7d6,2);rim.position.set(-5,3,-2);scene.add(rim);
@@ -136,7 +77,6 @@ export function createRaceWorld(data){
     const rainbow=[0xdb6a83,0xd59761,0xd3c76b,0x69b499,0x649ec9,0x8983c8,0xae78bc];
     for(let i=0;i<7;i++)addRibbon(scene,data,-data.halfWidth+i*data.halfWidth*2/7,-data.halfWidth+(i+1)*data.halfWidth*2/7,0,()=>rainbow[i]);
     addRibbon(scene,data,-data.halfWidth-.25,-data.halfWidth,.04,()=>0xd9ddff,true);addRibbon(scene,data,data.halfWidth,data.halfWidth+.25,.04,()=>0xd9ddff,true);
-    for(const side of [-1,1]){const pts=Array.from({length:420},(_,i)=>{const {p,side:s}=data.sample(i/419);return p.addScaledVector(s,side*(data.halfWidth+.25)).add(V(0,.9,0));});const rail=mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),420,.07,4,false),mat(0xa8c3ff,.25,.3,0x536ca1),scene);}
     buildSpaceScenery(scene,data);
   }else{
     addRibbon(scene,data,-data.halfWidth,data.halfWidth,.015,()=>0x454d4b);
@@ -152,5 +92,5 @@ export function createRaceWorld(data){
   const finishLine=new THREE.Group();for(let x=0;x<14;x++)for(let z=0;z<2;z++)box(finishLine,data.halfWidth/7,.015,.65,(x+z)%2?0xeff0e4:0x283a3b,-data.halfWidth+(x+.5)*data.halfWidth/7,.055,z*.65);placeOnTrack(finishLine,data,0);scene.add(finishLine);
   return {scene,pads};
 }
-export function updateBikePose(bike,data,progress,offset,steer,speed,dt){const {p,tangent,side}=data.sample(progress/data.length);bike.position.copy(p).addScaledVector(side,offset);bike.position.y+=.06;bike.rotation.set(-Math.asin(tangent.y),Math.atan2(tangent.x,tangent.z),0,'YXZ');bike.userData.body.rotation.z=THREE.MathUtils.damp(bike.userData.body.rotation.z,-steer*.27,8,dt);for(const wheel of bike.userData.wheels)wheel.rotation.x+=speed*dt/.49;return {p,tangent,side};}
-export function disposeWorld(scene){scene.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const list=Array.isArray(o.material)?o.material:[o.material];for(const m of list){if(![...materials.values()].includes(m)){m.map?.dispose();m.dispose();}}}});}
+export function updateBikePose(bike,data,progress,offset,steer,speed,dt,animation={}){const {p,tangent,side}=data.sample(progress/data.length);bike.position.copy(p).addScaledVector(side,offset);bike.position.y+=.06;bike.rotation.set(-Math.asin(tangent.y),Math.atan2(tangent.x,tangent.z),0,'YXZ');animateBike(bike,{steer,speed,...animation},dt);return {p,tangent,side};}
+export function disposeWorld(scene){scene.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const list=Array.isArray(o.material)?o.material:[o.material];for(const m of list){if(!m.userData.sharedBike && ![...materials.values()].includes(m)){if(m.map&&!m.map.userData.sharedBike)m.map.dispose();m.dispose();}}}});}

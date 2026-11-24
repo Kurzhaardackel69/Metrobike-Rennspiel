@@ -4,8 +4,13 @@ Ein 3D-Arcade-Rennspiel, inspiriert von den handgefertigten Café-Racern von [Me
 
 - Zwei eigene Strecken: **Kartbahn** bei Tageslicht und **Sternenallee**, eine leuchtende Regenbogenstrecke im All.
 - Drei Runden gegen fünf Computerfahrer, Positionen, Minimap, Rundenzeiten und persönliche Streckenrekorde.
-- Vier Lackierungen für das prozedural modellierte Café-Racer-Motorrad.
-- Aufladbarer Boost, Boost-Felder, Kollisionen, Grasverzögerung und Leitplanken.
+- Detailliertes eigenes Café-Racer-Modell mit offenem U-Rahmen, tiefem Motor, Speichenrädern, gebohrten Bremsscheiben, Lederstruktur und reflektierendem Lack.
+- Vier Lackierungen und eine drehbare 360°-Ansicht per Ziehen, Pfeiltasten, Regler und Drehtasten.
+- **2-kW- und 4-kW-Klasse** mit unterschiedlicher Arcade-Leistung und getrennten Streckenrekorden; die Computerfahrer fahren in derselben Klasse.
+- **Einzel-, Höcker- oder Doppelsitz**, Leder in Dunkelbraun, Cognac oder Schwarz, optionaler Beifahrer. Ein Beifahrer aktiviert automatisch den Doppelsitz.
+- Aufladbarer Boost, Boost-Felder, Kollisionen und Grasverzögerung.
+- Bis ca. 54° Schräglage, **Wheelie beim Boost**, **Stoppie bei Vollbremsung** aus höherem Tempo. Beide Stunts drehen das Motorrad um den Radaufstandspunkt.
+- Auf der **Sternenallee kann man herunterfallen**. Ein animierter Papagei hebt Bike und Fahrer wieder auf die Strecke, krächzt „Haha, du Lappen!“ und hinterlässt einen kleinen Fleck auf dem Fahrerhelm. Das Rennen läuft während der Bergung weiter; die Bergung überspringt keine Streckenteile.
 - Pause, Neustart, Garage, Vollbild und optionaler synthetischer Motorsound.
 - Persönliche Bestzeiten und Einstellungen bleiben lokal im Browser gespeichert.
 
@@ -27,14 +32,14 @@ node server.mjs
 | Bremse | S / Pfeil runter | Rechte Brems-Taste |
 | Lenken | A / D, Pfeile links / rechts | Linkes Lenkpad horizontal ziehen |
 | Boost | Shift / Leertaste | Rechte Boost-Taste (gibt auch Gas) |
-| Zurück auf die Strecke | R | Leitplanken halten dich auf der Strecke |
+| Zurück auf die Strecke | R, außerhalb einer laufenden Bergung | Papagei rettet dich nach einem Sturz automatisch |
 | Pause | Esc / P | Pause oben rechts |
 
-Kurven haben eine leichte Fliehkraft. Vor engen Kurven bremsen und gegenlenken. Boost lädt sich von selbst wieder auf. Gelbe Felder aktivieren einen kurzen Boost und laden Energie nach. Beim Verlassen des Fensters pausiert das Rennen automatisch. Im Hochformat fordert das Spiel zum Drehen auf.
+Kurven haben eine leichte Fliehkraft. Vor engen Kurven bremsen und gegenlenken. Boost lädt sich von selbst wieder auf. Gelbe Felder aktivieren einen kurzen Boost und laden Energie nach. Beim Verlassen des Fensters pausiert das Rennen automatisch. Im Hochformat fordert das Spiel zum Drehen auf. Papageien-Spruch und Motor lassen sich über den Tonknopf stummschalten; die Textblase bleibt sichtbar. Die Stimme nutzt die deutsche Sprachausgabe des Browsers, wenn verfügbar, ergänzt durch einen synthetischen Krächzer. Ein Helmfleck bleibt bis zum nächsten Rennen bestehen.
 
 ## Projekt
 
-`dist/index.html`, `style.css`: Garage und responsive Spieloberfläche. `game.js`: Eingabe, Kamera, WebAudio und UI. `world.js`: Motorradmodelle, Strecken und Umgebung in Three.js. `race-core.mjs`: unabhängige Rennsimulation. `tests/`: Tests für die Rennregeln. `server.mjs`: lokaler statischer Server.
+`dist/index.html`, `style.css`, `upgrade.css`: Garage und responsive Spieloberfläche. `game.js`: Eingabe, Kamera, Audio, Rettungsablauf und UI. `bike.js`: eigenes Motorradmodell, Sitzbänke, Fahrer, Beifahrer, Stunts, Materialien und Papagei. `bike-config.mjs`: Konfiguration und Leistungsklassen. `world.js`: Strecken und Umgebung in Three.js. `race-core.mjs`: unabhängige Rennsimulation einschließlich Stunts und Bergung. `tests/`: Tests für Rennregeln, beide Strecken, Klassen, Radaufstandspunkte und Rettung. `server.mjs`: lokaler statischer Server.
 
 ```sh
 node --test tests/*.test.mjs
