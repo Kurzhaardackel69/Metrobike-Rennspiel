@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.tar.gz
+*.tgz
+.openai/deploy-state.json
+artifacts/
