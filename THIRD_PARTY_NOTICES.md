@@ -23,3 +23,13 @@ Barlow Condensed by Jeremy Tribby and DM Sans by Colophon Foundry are optionally
 Copyright 2011–2020 Norbert Landsteiner, mass:werk, and the eSpeak / speak.js contributors. Distributed under GNU GPL version 3. Official distribution: https://www.masswerk.at/mespeak/mespeak.zip ; project and documentation: https://www.masswerk.at/mespeak/ ; upstream eSpeak port: https://github.com/kripken/speak.js .
 
 Unmodified runtime, German language data, license and full JavaScript sources are included under `dist/assets/mespeak/`. See `dist/assets/mespeak/License.txt`. The project's own speech effects, game simulation and models are in the source repository alongside these components.
+
+## Bundled neural dialogue recordings
+
+The WAV files in dist/assets/voices/ are generated locally using Piper 2023.11.14-2 (MIT, https://github.com/rhasspy/piper/releases/tag/2023.11.14-2). No Piper runtime or voice model is distributed with the game. The reproducible generator is scripts/bake-voices.mjs.
+
+German Thorsten emotional model, v1.0.0 (CC0 dataset by Thorsten Müller): https://huggingface.co/rhasspy/piper-voices/blob/v1.0.0/de/de_DE/thorsten_emotional/medium/MODEL_CARD . Model: https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/de/de_DE/thorsten_emotional/medium/de_DE-thorsten_emotional-medium.onnx ; append .json for configuration. Source dataset: https://github.com/thorstenMueller/Thorsten-Voice .
+
+German Kerstin model, v1.0.0 (CC0 dataset): https://huggingface.co/rhasspy/piper-voices/blob/v1.0.0/de/de_DE/kerstin/low/MODEL_CARD . Model: https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/de/de_DE/kerstin/low/de_DE-kerstin-low.onnx ; append .json for configuration. Source dataset: https://github.com/rhasspy/dataset-voice-kerstin .
+
+The three radio compositions, all instrument synthesis, gun effects, helmet drips and crash animations are original code in this repository. No third-party music or game audio is included.

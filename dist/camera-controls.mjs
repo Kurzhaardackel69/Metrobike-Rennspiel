@@ -7,4 +7,4 @@ export const CAMERA_VIEWS={
 };
 const arrows={ArrowLeft:'left',ArrowRight:'right',ArrowDown:'front',ArrowUp:'top'};
 export function cameraView(keys){let view='chase';for(const key of keys)if(arrows[key])view=arrows[key];return view;}
-export function drivingInput(keys,touch={},steer=0){return {gas:keys.has('KeyW')||!!touch.gas,brake:keys.has('KeyS')||!!touch.brake,steer:steer||((keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)),boost:keys.has('ShiftLeft')||keys.has('ShiftRight')||keys.has('Space')||!!touch.boost};}
+export function drivingInput(keys,touch={},steer=0){return {gas:keys.has('KeyW')||!!touch.gas,brake:keys.has('KeyS')||!!touch.brake,steer:steer||((keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)),fire:keys.has('KeyF')||!!touch.fire,boost:keys.has('ShiftLeft')||keys.has('ShiftRight')||keys.has('Space')||!!touch.boost};}

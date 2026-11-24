@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {trackData} from '../dist/world.js';
+import {maxYawRate} from '../dist/riding-physics.mjs';
 import {Race,clamp} from '../dist/race-core.mjs';
 for(const id of ['kart','star'])for(const powerClass of [2,4]){
   test(`${id}, ${powerClass} kW: closed track has finite positions, continuous tangents and a complete three-lap race`,()=>{
@@ -14,8 +15,10 @@ for(const id of ['kart','star'])for(const powerClass of [2,4]){
     const race=new Race(track,track.curvature,{powerClass});
     for(let step=0;step<22000&&!race.player.finished;step++){
       const p=race.player,curve=track.curvature(p.progress/track.length);
-      const steer=clamp((curve*p.speed*p.speed*.19-p.offset*2)/(2.5+p.speed*.34),-1,1);
-      race.update(.01,{gas:true,steer,boost:race.player.boost>.6});
+      const ahead=Math.max(...[0,.35,.7].map(t=>Math.abs(track.curvature((p.progress+p.speed*t)/track.length))));
+      const safeSpeed=Math.min(race.maxSpeed,1.5/Math.max(.005,ahead));
+      const steer=clamp((curve*p.speed-p.offset*.24-p.heading*4.2)/Math.max(.1,maxYawRate(p.speed)),-1,1);
+      race.update(.01,{gas:p.speed<safeSpeed+1,brake:p.speed>safeSpeed+1,steer});
     }
     assert.ok(race.player.finished,`Did not finish ${id}`);
     assert.equal(race.player.laps.length,3);

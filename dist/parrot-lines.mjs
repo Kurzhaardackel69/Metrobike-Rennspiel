@@ -1,6 +1,6 @@
 export const PARROT_LINES=[
   'Haha, du Lappen!',
-  'Schon wieder, {name}? Du Kurvenkasper! Die Straße ist der bunte Teil!',
+  'Schon wieder? Du Kurvenkasper! Die Straße ist der bunte Teil!',
   'Dritter Absturz! Du fährst wie ein Sack Kartoffeln, du Bruchpilot!',
   'Viermal runter! Du Vollpfosten, ich bin kein verdammtes Lufttaxi!',
   'Fünf Abstürze! Selbst ein Toaster fährt besser als du, du Oberlappen!',

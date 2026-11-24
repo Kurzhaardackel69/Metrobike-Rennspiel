@@ -9,13 +9,14 @@ Ein 3D-Arcade-Rennspiel, inspiriert von den handgefertigten Café-Racern von [Me
 - **2-kW- und 4-kW-Klasse** mit unterschiedlicher Arcade-Leistung und getrennten Streckenrekorden; die Computerfahrer fahren in derselben Klasse.
 - **Einzel-, Höcker- oder Doppelsitz**, Leder in Dunkelbraun, Cognac oder Schwarz, optionaler Beifahrer. Ein Beifahrer aktiviert automatisch den Doppelsitz.
 - **Stummellenker oder hoher Lenker**, mit dazu passender Handposition des Fahrers. Kürzerer Tank mit Freiraum zur Gabel und kompakte Schutzbleche.
-- Geschwindigkeitsabhängiges, weiches Einlenken mit seitlicher Trägheit, begrenztem Grip, Schräglage und Lastwechseln beim Bremsen und Beschleunigen.
+- **Freie Fahrtrichtung ohne automatische Streckenführung**: Nur Lenkeingaben ändern die Richtung in der Welt. Nach dem Loslassen fährt das Bike geradeaus in seiner zuletzt eingeschlagenen Richtung weiter. Schräglage, Grip und Lastwechsel bleiben erhalten.
 - Aufladbarer Boost, Boost-Felder, Kollisionen und Grasverzögerung.
 - Bis ca. 54° Schräglage, **Wheelie beim Boost**, **Stoppie bei Vollbremsung** aus höherem Tempo. Beide Stunts drehen das Motorrad um den Radaufstandspunkt.
-- Auf der **Sternenallee kann man herunterfallen**. Ein animierter Papagei hebt Bike und Fahrer wieder auf die Strecke. Eine Nahaufnahme zeigt einen großen Haufen sichtbar vom Vogel auf den Fahrerhelm fallen. Er bleibt nach der Landung auf dem Helm. Das Rennen läuft während der Bergung weiter; die Bergung überspringt keine Streckenteile.
+- Auf der **Sternenallee kann man herunterfallen**. Ein animierter Papagei hebt Bike und Fahrer wieder auf die Strecke. Eine Nahaufnahme zeigt einen großen Haufen sichtbar vom Vogel auf den Fahrerhelm fallen. Danach schmilzt der Haufen langsam zusammen: fünf sichtbare Spuren laufen über die Helmschale und Tropfen lösen sich unten ab. Das Rennen läuft während der Bergung weiter; die Bergung überspringt keine Streckenteile.
 - Der Papagei wird mit jedem Absturz im Rennen frecher. Unter **🦜 Papagei** lassen sich eigene Sprüche (eine Zeile pro Absturz, bis zu 12 Zeilen), Platzhalter `{name}` / `{sturz}` und zwei krächzende Stimmen konfigurieren und anhören. Die letzte Zeile wird bei weiteren Stürzen wiederholt. Alle Texte und Einstellungen bleiben im Browser gespeichert.
 - Eine als Frau gestaltete Beifahrerin mit Gesicht, Pferdeschwanz und Motorradkleidung reagiert auf Wheelies und Stoppies: kurze Schlaganimation gegen den Fahrer und „Lass den Scheiß!“. Die Animation beeinflusst das Fahrverhalten nicht.
-- Blubbernder **V2-Sound** mit ungleichmäßigen Zündimpulsen und drehzahlabhängigem Auspuffklang. Motor und Sprache sind stummschaltbar; der Motor wird während der Sprüche leiser.
+- **Drei wählbare Motorsounds:** V2-Blubberbox, Racing-Krawalltüte und Elektro-Surren. **Drei eigene Musikkanäle**: Kettenfett FM, Papagei Paradise und Kosmos-Kasper, lokal per Web Audio komponiert. Musik, Sprache/Schreie und Motor/Effekte haben eigene Lautstärkeregler und Aus-Schalter. Musik und Motor werden bei Dialogen leiser.
+- **Pistole (F / FEUER):** sichtbare Waffe, Mündungsblitz und Flugspur, Zielhilfe für Gegner vor dem Bike, sechs Schuss mit automatischem Nachladen. Treffer lösen Schreie und getrennte Fahrer-/Bike-Sturzanimationen aus. Getroffene Gegner verlieren 3,4 Sekunden und steigen anschließend wieder auf; kurze Schutzzeit verhindert Dauertreffer beim Aufstehen.
 - Pause, Neustart, Garage, Vollbild und optionaler synthetischer Motorsound.
 - Persönliche Bestzeiten und Einstellungen bleiben lokal im Browser gespeichert.
 
@@ -38,10 +39,13 @@ node server.mjs
 | Lenken | A / D | Linkes Lenkpad horizontal ziehen |
 | Kamera nur solange gehalten | ← / → Seite, ↑ von oben, ↓ von vorne | Rennkamera |
 | Boost | Shift / Leertaste | Rechte Boost-Taste (gibt auch Gas) |
+| Schießen | F halten | FEUER rechts |
+| Radiosender wechseln | M / Senderanzeige | Senderanzeige antippen |
+| Musik, Sprache, Motor einstellen | ♫ Radio | ♫ oben rechts |
 | Zurück auf die Strecke | R, außerhalb einer laufenden Bergung | Papagei rettet dich nach einem Sturz automatisch |
 | Pause | Esc / P | Pause oben rechts |
 
-Vor engen Kurven bremsen und ruhig einlenken: abrupte Richtungswechsel bei hohem Tempo benötigen Zeit. Boost lädt sich von selbst wieder auf. Gelbe Felder aktivieren einen kurzen Boost und laden Energie nach. Beim Verlassen des Fensters pausiert das Rennen automatisch. Im Hochformat fordert das Spiel zum Drehen auf. Pfeiltasten verändern ausschließlich die Kamera; nach dem Loslassen kehrt sie zur Rennansicht zurück. Die Papageienstimme wird lokal mit meSpeak / eSpeak, Croak-Variante, Bandpass, Verzerrung und Tremolo erzeugt. Eine Gerätestimme dient als Ausweichlösung. Die Beifahrerin verwendet bevorzugt eine verfügbare deutsche Frauenstimme, sonst eine lokal synthetisierte Stimme.
+Vor engen Kurven bremsen und ruhig einlenken: abrupte Richtungswechsel bei hohem Tempo benötigen Zeit. Boost lädt sich von selbst wieder auf. Gelbe Felder aktivieren einen kurzen Boost und laden Energie nach. Beim Verlassen des Fensters pausiert das Rennen automatisch. Im Hochformat fordert das Spiel zum Drehen auf. Pfeiltasten verändern ausschließlich die Kamera; nach dem Loslassen kehrt sie zur Rennansicht zurück. Standarddialoge (Absturz 1–20), Beifahrerin und Treffer verwenden mit Piper vorbereitete deutsche neuronale Sprachaufnahmen, ohne die vorherige starke Verzerrung. Eigene Sprüche und weitere Absturzzahlen nutzen bevorzugt eine deutsche Systemstimme, je nach Browser auch eine Onlinestimme. Nur wenn keine deutsche Gerätestimme verfügbar ist, kommt die unverzerrte meSpeak-Ersatzstimme zum Einsatz. Die Klangqualität eigener Texte hängt daher vom Gerät ab. Die Musik besteht aus eigenen kurzen Instrumental-Kompositionen; es werden keine fremden Musikaufnahmen gestreamt.
 
 ## Projekt
 
@@ -54,6 +58,10 @@ node --check dist/world.js
 ```
 
 Three.js 0.170.0 ist lokal unter `dist/assets/` enthalten und steht unter der MIT-Lizenz. meSpeak 2.0.7 und die deutsche Stimme werden lokal mitgeliefert, einschließlich Lizenz und vollständiger JavaScript-Quellen unter `dist/assets/mespeak/src/`. Das Projekt wird unter GPLv3 bereitgestellt; die jeweiligen Hinweise für Fremdkomponenten bleiben gültig (siehe `LICENSE` und `THIRD_PARTY_NOTICES.md`). Schriftarten werden optional von Google Fonts geladen, mit Systemschriften als Fallback. Das Spiel benötigt weder Account noch Backend.
+
+## Sprachaufnahmen neu erzeugen
+
+`scripts/bake-voices.mjs` verwendet das offizielle Piper-Windows-Paket 2023.11.14-2 und die Modelle `de_DE-thorsten_emotional-medium` sowie `de_DE-kerstin-low` vom Tag `v1.0.0`. Die CC0-Datensatzquellen und Downloadlinks sind in `THIRD_PARTY_NOTICES.md` dokumentiert. Werkzeug und Modelle liegen nur im ignorierten `reference/`-Ordner; ausgeliefert werden 24 WAV-Aufnahmen mit zusammen etwa 5 MB. Nach Änderung der Standardsprüche `node scripts/bake-voices.mjs` ausführen.
 
 ## Referenzen zur Fahrphysik
 
