@@ -17,3 +17,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ## Fonts
 
 Barlow Condensed by Jeremy Tribby and DM Sans by Colophon Foundry are optionally requested from Google Fonts under the SIL Open Font License. System fonts are used if the request fails.
+
+## meSpeak.js 2.0.7 / eSpeak
+
+Copyright 2011–2020 Norbert Landsteiner, mass:werk, and the eSpeak / speak.js contributors. Distributed under GNU GPL version 3. Official distribution: https://www.masswerk.at/mespeak/mespeak.zip ; project and documentation: https://www.masswerk.at/mespeak/ ; upstream eSpeak port: https://github.com/kripken/speak.js .
+
+Unmodified runtime, German language data, license and full JavaScript sources are included under `dist/assets/mespeak/`. See `dist/assets/mespeak/License.txt`. The project's own speech effects, game simulation and models are in the source repository alongside these components.

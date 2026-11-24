@@ -6,6 +6,10 @@ export const POWER_CLASSES = {
 export const SEAT_COLORS = {brown:0x493026,cognac:0x9a5631,black:0x202123};
 export function normalizeBikeConfig(config={}) {
   const passenger=config.passenger===true;
-  return {powerClass:Number(config.powerClass)===4?4:2,seat:passenger?'double':['single','hump','double'].includes(config.seat)?config.seat:'single',leather:Object.hasOwn(SEAT_COLORS,config.leather)?config.leather:'brown',passenger};
+  return {powerClass:Number(config.powerClass)===4?4:2,seat:passenger?'double':['single','hump','double'].includes(config.seat)?config.seat:'single',leather:Object.hasOwn(SEAT_COLORS,config.leather)?config.leather:'brown',handlebar:config.handlebar==='high'?'high':'clipon',passenger};
 }
-export function recordKey(track,config){return `best:${track}:${normalizeBikeConfig(config).powerClass}kw`;}
+export const DIFFICULTIES={easy:{name:'Locker',speed:.8,acceleration:.65,corner:1.25},normal:{name:'Normal',speed:1,acceleration:.8,corner:1},hard:{name:'Profi',speed:1.15,acceleration:1.1,corner:.72}};
+export function normalizePlayerName(name){return Array.from(String(name??'').replace(/[\u0000-\u001f\u007f]/g,'').replace(/\s+/g,' ').trim()).slice(0,20).join('')||'Du';}
+export function normalizeRaceSettings(settings={}){const laps=Number(settings.laps);return {laps:Number.isInteger(laps)?Math.max(1,Math.min(10,laps)):3,difficulty:Object.hasOwn(DIFFICULTIES,settings.difficulty)?settings.difficulty:'normal',playerName:normalizePlayerName(settings.playerName)};}
+export function recordKey(track,config,settings={}){const race=normalizeRaceSettings(settings);return `best:${track}:${normalizeBikeConfig(config).powerClass}kw:${race.laps}laps:${race.difficulty}`;}
+export function handlebarSpec(type){return type==='high'?{height:1.74,z:.53,elbow:1.76}:{height:1.38,z:.62,elbow:1.6};}
