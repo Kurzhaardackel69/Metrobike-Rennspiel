@@ -6,7 +6,7 @@ export function terrainHeight(x){const blend=clamp((x-25)/25,0,1),wave=1.4*Math.
 export function terrainSlope(x){return (terrainHeight(x+.1)-terrainHeight(x-.1))/.2;}
 const angleDifference=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
 export function mxPlayer(id,name,color=0){return {id,name,color,x:8,y:terrainHeight(8)+.8,vx:0,vy:0,angle:0,omega:0,grounded:true,crashTime:0,crashes:0,bestX:8,finished:false,finishTime:null,boost:1,shotCooldown:0,previousReset:false,...hornState(),input:{}};}
-export function mxInput(value={}){return {gas:value.gas===true,brake:value.brake===true,boost:value.boost===true,fire:value.fire===true,horn:value.horn===true,reset:value.reset===true,steer:Number.isFinite(value.steer)?clamp(value.steer,-1,1):0};}
+export function mxInput(value={}){if(!value||typeof value!=='object')value={};return {gas:value.gas===true,brake:value.brake===true,boost:value.boost===true,fire:value.fire===true,horn:value.horn===true,reset:value.reset===true,steer:Number.isFinite(value.steer)?clamp(value.steer,-1,1):0};}
 export function crashMx(p){if(p.crashTime>0||p.finished)return false;p.crashTime=1.65;p.crashes++;p.vx=0;p.vy=2;return true;}
 export function updateMxPlayer(p,dt,time,events=[]){dt=clamp(dt,0,.04);if(p.finished)return;const i=p.input||{};p.shotCooldown=Math.max(0,p.shotCooldown-dt);
   if(updateHorn(p,dt,i.horn,p.crashTime<=0))events.push({type:'horn',playerId:p.id});

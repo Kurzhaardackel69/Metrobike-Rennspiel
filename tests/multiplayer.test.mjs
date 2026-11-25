@@ -9,7 +9,7 @@ test('MX physics can finish, brakes stop, airborne lean changes rotation, and hi
  const b=mxPlayer('b','B');b.vx=20;b.input={brake:true};for(let n=0;n<120;n++)updateMxPlayer(b,1/60,n/60);assert.equal(b.vx,0);
  b.grounded=false;b.y=100;b.input={steer:1};updateMxPlayer(b,.04,0);assert.ok(b.angle>0);
  const c=mxPlayer('c','C'),d=mxPlayer('d','D');d.x=15;c.input={fire:true};assert.ok(updateMxRace([c,d],1/60,0).some(e=>e.type==='hit'));assert.ok(d.crashTime>0);
- assert.deepEqual(mxInput({x:999,gas:'true',steer:Infinity}),mxInput({}));
+ assert.deepEqual(mxInput(null),mxInput({}));assert.deepEqual(mxInput({x:999,gas:'true',steer:Infinity}),mxInput({}));
  assert.equal(renderLanes([c,d],'c').at(-1).id,'c');assert.equal(renderLanes([c,d],'d').at(-1).id,'d');
  assert.equal(mxServerUrl('ws://localhost:8787'),'ws://localhost:8787/ws');assert.throws(()=>mxServerUrl('ws://192.168.1.2:8787',{protocol:'https:'}));
 });
