@@ -12,6 +12,8 @@ Auf diesem Server soll unter einer gemeinsamen Domain ausschließlich die jeweil
 
 Begriffe, Vorgehen und nächste Schritte stehen in [HOSTING.md](HOSTING.md).
 
+## Spielumfang
+
 - Zwei eigene Strecken: **Kartbahn** bei Tageslicht und **Sternenallee**, eine leuchtende Regenbogenstrecke im All.
 - **Spielername, 1–10 Runden und drei Schwierigkeiten** (Locker / Normal / Profi). Fünf Computerfahrer, Positionen, Minimap und persönliche Bestzeiten getrennt nach Strecke, Leistungsklasse, Rundenzahl und Schwierigkeit.
 - Detailliertes eigenes Café-Racer-Modell mit offenem U-Rahmen, tiefem Motor, Speichenrädern, gebohrten Bremsscheiben, Lederstruktur und reflektierendem Lack.
