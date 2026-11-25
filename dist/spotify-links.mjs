@@ -1,5 +1,8 @@
 // User-supplied bookmarks only. No Spotify API, SDK, account tokens or embeds.
 export const SPOTIFY_LOGIN='https://accounts.spotify.com/login?continue=https%3A%2F%2Fopen.spotify.com%2F';
+export function spotifyAppLink(input){const playlist=spotifyPlaylist(input);return playlist?'spotify:playlist:'+playlist.id:null;}
+export function restoreSpotifySession(value){return {...normalizeSpotifyLinks(value),external:false};}
+export function savedSpotifyLinks(value){return {...normalizeSpotifyLinks(value),external:false};}
 export function spotifyPlaylist(input){const text=String(input??'').trim();let id;
   const uri=/^spotify:playlist:([a-zA-Z0-9]{22})$/.exec(text);if(uri)id=uri[1];else{
     try{const u=new URL(text);if(u.protocol!=='https:'||u.hostname!=='open.spotify.com'||u.port||u.username||u.password) return null;const match=/^\/(?:intl-[a-z]{2}\/)?playlist\/([a-zA-Z0-9]{22})\/?$/.exec(u.pathname);if(!match)return null;id=match[1];}catch{return null;}

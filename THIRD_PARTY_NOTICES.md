@@ -33,3 +33,7 @@ German Thorsten emotional model, v1.0.0 (CC0 dataset by Thorsten Müller): https
 German Kerstin model, v1.0.0 (CC0 dataset): https://huggingface.co/rhasspy/piper-voices/blob/v1.0.0/de/de_DE/kerstin/low/MODEL_CARD . Model: https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/de/de_DE/kerstin/low/de_DE-kerstin-low.onnx ; append .json for configuration. Source dataset: https://github.com/rhasspy/dataset-voice-kerstin .
 
 The three radio compositions, all instrument synthesis, gun effects, helmet drips and crash animations are original code in this repository. No third-party music or game audio is included.
+
+## Android host
+
+The Android app uses AndroidX WebKit 1.14.0 and its AndroidX dependencies, Copyright The Android Open Source Project, under Apache License 2.0. See android/ANDROIDX-LICENSE.txt. Android system WebView is provided by the device and is not bundled. The app does not include the Spotify SDK.

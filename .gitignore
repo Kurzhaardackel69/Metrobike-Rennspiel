@@ -6,3 +6,9 @@ Thumbs.db
 .openai/deploy-state.json
 artifacts/
 reference/
+
+android/.gradle/
+android/**/build/
+android/app/src/main/assets/
+android/local.properties
+*.apk

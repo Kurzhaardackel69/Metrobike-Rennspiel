@@ -77,3 +77,13 @@ Clubradio-Musikregler und globaler Spiel-Mute steuern ausschließlich Spielaudio
 Die eigene, vereinfachte Arcade-Implementierung verwendet Grundideen wie gedämpftes Einlenken, Schräglage, Reifengrip und Lastwechsel. Als technische Referenzen dienten [Kright/MotorcyclePhysics](https://github.com/Kright/MotorcyclePhysics) und die [Reifen-Dokumentation von Vehicle Physics Pro](https://vehiclephysics.com/blocks/tires/). Es wurde kein Code oder Fahrzeugmodell aus diesen Projekten übernommen.
 
 Eigenständiges Fanprojekt, keine offizielle Metorbike- oder Nintendo-Veröffentlichung. Die Sternenallee ist eine eigene Strecke; keine Mario-Kart-Figuren, Musik oder Spieldateien werden verwendet. Die Bike-Lackierungen unterscheiden sich optisch; die Spielwerte sind identisch und keine realen Fahrzeugdaten.
+
+## Android-Test-APK 1.4.0
+
+Das native Android-Projekt liegt unter android/. Es enthält das Spiel lokal, läuft im Querformat und passt WebView/Canvas an die verfügbare Displayfläche an. Android 8 oder neuer ist erforderlich. Google Fonts und externe Spotify-Links benötigen Internet; das Rennen selbst und die vorbereiteten Stimmen sind enthalten.
+
+Im Radio „Spotify extern“ wählen und „In Spotify-App öffnen“ verwenden. Nach dem Starten der Musik in Spotify zum Spiel zurückwechseln. Ein Spotify-Webplayer-Tab muss für seine eigene Wiedergabe offen bleiben; die Spotify-App ist davon unabhängig. Damit sie auf Android nicht vom Spielaudio unterbrochen wird, wird das Spielaudio während dieser Auswahl pausiert. Bei Appwechsel pausiert das Rennen. Beim Beenden oder Neuladen endet die aktive Spotify-Auswahl, gespeicherte Radios bleiben erhalten. Das Spiel besitzt keinen Spotify-Kontozugriff und kann die unabhängige Spotify-App weder pausieren noch abmelden.
+
+Der GitHub-Actions-Workflow „Android APK“ prüft sechs Displaygrößen, Rotation, Spotify-Auswahl und 50 Simulationstests. Danach baut und signaturprüft er die Debug-APK. Das herunterladbare Artefakt heißt „Metorbike-Racing-APK“. Der lokale Build benötigt JDK 17, Android SDK 35 und Gradle 8.13: erst node scripts/prepare-android.mjs, dann gradle -p android assembleDebug. Das Ergebnis liegt unter android/app/build/outputs/apk/debug/app-debug.apk.
+
+Es handelt sich um eine signierte Test-APK, keine Play-Store-Version. Der CI-Debug-Schlüssel ist nur für den jeweiligen Build gedacht; ein späterer Build kann eine Neuinstallation erfordern. Für eine dauerhafte Release-Veröffentlichung ist ein eigener, sicher verwahrter Signierschlüssel notwendig. Die App wurde nicht auf einem echten Telefon mit angemeldetem Spotify-Konto geprüft.

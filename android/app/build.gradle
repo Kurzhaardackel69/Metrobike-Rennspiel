@@ -1,0 +1,15 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'de.metorbikeracing.game'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'de.metorbikeracing.game'
+        minSdk 26
+        targetSdk 35
+        versionCode 140
+        versionName '1.4.0'
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    buildTypes { debug { applicationIdSuffix '.debug' } }
+}
+dependencies { implementation 'androidx.webkit:webkit:1.14.0' }
