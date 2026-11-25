@@ -5,7 +5,9 @@ const profiles=[{name:'desktop',width:1366,height:768},{name:'large-monitor',wid
 const report=[];const deadline=setTimeout(()=>{console.error('Display suite exceeded six minutes');server.kill();process.exit(1);},360000);try{
   for(let i=0;i<100;i++){try{if((await fetch('http://127.0.0.1:4173/')).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
   browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-dev-shm-usage']});
-  for(const p of profiles){console.log('Checking display:',p.name,p.width,p.height);const context=await browser.newContext({viewport:{width:p.width,height:p.height},deviceScaleFactor:p.touch?2:1,isMobile:!!p.touch,hasTouch:!!p.touch});const page=await context.newPage(),errors=[];page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(30000);page.on('pageerror',e=>errors.push(e.message));await page.route('https://fonts.googleapis.com/**',r=>r.abort());
+  for(const p of profiles){console.log('Checking display:',p.name,p.width,p.height);const context=await browser.newContext({viewport:{width:p.width,height:p.height},deviceScaleFactor:1,isMobile:!!p.touch,hasTouch:!!p.touch});const page=await context.newPage(),errors=[];page.setDefaultTimeout(20000);page.setDefaultNavigationTimeout(45000);page.on('pageerror',e=>errors.push(e.message));await page.route('https://fonts.googleapis.com/**',r=>r.abort());
+    // CI has a software GPU. Limit render cadence while retaining real resize/RAF behavior.
+    await page.addInitScript(()=>{const raf=window.requestAnimationFrame.bind(window);window.requestAnimationFrame=callback=>raf(()=>setTimeout(()=>callback(performance.now()),200));});
     if(p.name==='phone')await page.addInitScript(()=>{window.__apkTest={opened:[],closed:false};window.MetorbikeAndroid={openSpotify:id=>window.__apkTest.opened.push(id),closeGame:()=>window.__apkTest.closed=true};});
     try{await page.goto('http://127.0.0.1:4173/');await page.locator('#loading').waitFor({state:'hidden',timeout:30000});assert.equal(await page.locator('#webgl-error').isVisible(),false);
       const initial=await page.locator('#start-button').boundingBox();assert.ok(initial.x>=0&&initial.x+initial.width<=p.width+1,`${p.name}: start button width`);if(p.height<=450)assert.ok(initial.y+initial.height<=p.height+1,`${p.name}: start button below screen (${initial.y+initial.height}>${p.height})`);
@@ -18,7 +20,7 @@ const report=[];const deadline=setTimeout(()=>{console.error('Display suite exce
       await page.screenshot({path:`${out}/${p.name}-race.png`});
       if(p.name==='phone'){await page.setViewportSize({width:390,height:844});await page.locator('#rotate-prompt').waitFor({state:'visible'});await page.setViewportSize({width:824,height:370});await page.locator('#rotate-prompt').waitFor({state:'hidden'});await page.waitForFunction(()=>Math.abs(document.querySelector('#scene canvas').getBoundingClientRect().width-824)<1);await page.screenshot({path:`${out}/phone-resized.png`});}
       assert.deepEqual(errors,[],`${p.name}: browser errors`);report.push({profile:p.name,width:p.width,height:p.height,passed:true});console.log('Passed display:',p.name);
-    }catch(error){await page.screenshot({path:`${out}/${p.name}-failure.png`,fullPage:true});report.push({profile:p.name,passed:false,error:error.message});throw error;}finally{await context.close();}
+    }catch(error){report.push({profile:p.name,passed:false,error:error.message});console.error('Failed display:',p.name,error.message);await page.screenshot({path:`${out}/${p.name}-failure.png`,fullPage:true,timeout:5000}).catch(()=>{});throw error;}finally{await context.close();}
   }
 }finally{clearTimeout(deadline);await writeFile(`${out}/report.json`,JSON.stringify(report,null,2));await browser?.close();server.kill();}
 console.log('Responsive browser checks passed for '+report.length+' display profiles.');
