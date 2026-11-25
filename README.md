@@ -16,6 +16,7 @@ Ein 3D-Arcade-Rennspiel, inspiriert von den handgefertigten Café-Racern von [Me
 - Der Papagei wird mit jedem Absturz im Rennen frecher. Unter **🦜 Papagei** lassen sich eigene Sprüche (eine Zeile pro Absturz, bis zu 12 Zeilen), Platzhalter `{name}` / `{sturz}` und zwei krächzende Stimmen konfigurieren und anhören. Die letzte Zeile wird bei weiteren Stürzen wiederholt. Alle Texte und Einstellungen bleiben im Browser gespeichert.
 - Eine als Frau gestaltete Beifahrerin mit Gesicht, Pferdeschwanz und Motorradkleidung reagiert auf Wheelies und Stoppies: kurze Schlaganimation gegen den Fahrer und „Lass den Scheiß!“. Die Animation beeinflusst das Fahrverhalten nicht.
 - **Drei wählbare Motorsounds:** V2-Blubberbox, Racing-Krawalltüte und Elektro-Surren. **Drei eigene Musikkanäle**: Kettenfett FM, Papagei Paradise und Kosmos-Kasper, lokal per Web Audio komponiert. Musik, Sprache/Schreie und Motor/Effekte haben eigene Lautstärkeregler und Aus-Schalter. Musik und Motor werden bei Dialogen leiser.
+- **Spotify-Verknüpfung im Radio:** „Spotify extern“ öffnet die Anmeldung und Wiedergabe direkt bei Spotify. Eigene Radio-/Mix-Playlists können mit Namen lokal gespeichert, ausgewählt, geöffnet und entfernt werden (max. 20). Währenddessen pausiert die Spielmusik; Sprach- und Motorsound bleiben separat einstellbar. Spotify-Wiedergabe, Login und Lautstärke werden ausschließlich bei Spotify bedient. Es werden keine Spotify-API, kein SDK, kein eingebetteter Player und keine Kontozugriffstokens verwendet.
 - **Pistole (F / FEUER):** sichtbare Waffe, Mündungsblitz und Flugspur, Zielhilfe für Gegner vor dem Bike, sechs Schuss mit automatischem Nachladen. Treffer lösen Schreie und getrennte Fahrer-/Bike-Sturzanimationen aus. Getroffene Gegner verlieren 3,4 Sekunden und steigen anschließend wieder auf; kurze Schutzzeit verhindert Dauertreffer beim Aufstehen.
 - Pause, Neustart, Garage, Vollbild und optionaler synthetischer Motorsound.
 - Persönliche Bestzeiten und Einstellungen bleiben lokal im Browser gespeichert.
@@ -58,6 +59,14 @@ node --check dist/world.js
 ```
 
 Three.js 0.170.0 ist lokal unter `dist/assets/` enthalten und steht unter der MIT-Lizenz. meSpeak 2.0.7 und die deutsche Stimme werden lokal mitgeliefert, einschließlich Lizenz und vollständiger JavaScript-Quellen unter `dist/assets/mespeak/src/`. Das Projekt wird unter GPLv3 bereitgestellt; die jeweiligen Hinweise für Fremdkomponenten bleiben gültig (siehe `LICENSE` und `THIRD_PARTY_NOTICES.md`). Schriftarten werden optional von Google Fonts geladen, mit Systemschriften als Fallback. Das Spiel benötigt weder Account noch Backend.
+
+## Spotify-Verknüpfung
+
+Spotify schließt Spiele in [Abschnitt III.2 der Developer Policy](https://developer.spotify.com/policy#iii-some-prohibited-applications) von der Nutzung seiner Entwicklerschnittstelle aus. Daher implementiert diese Version ausschließlich externe Links und lokale Lesezeichen, keinen Spotify-OAuth-Login und keine Fernsteuerung der Wiedergabe. Die UI zeigt keinen erfundenen Anmeldestatus. Es ist keine Spotify-Client-ID nötig. Anmeldung erfolgt auf `accounts.spotify.com`, Wiedergabe auf `open.spotify.com`.
+
+Unter ♫ → Spotify extern bei Spotify anmelden. Ein Künstler-, Album- oder Song-Radio [bei Spotify als Playlist speichern](https://support.spotify.com/de/article/spotify-radio/), über Teilen den Playlist-Link kopieren und im Spiel mit einem frei gewählten Namen ablegen. Nur vollständige HTTPS-Links zu `open.spotify.com/playlist/<ID>` (auch mit `intl-de/`) oder `spotify:playlist:<ID>` werden akzeptiert. Trackingparameter werden entfernt. Gespeicherte Links sind keine Garantie, dass eine private Playlist für ein anderes Spotify-Konto zugänglich ist.
+
+Clubradio-Musikregler und globaler Spiel-Mute steuern ausschließlich Spielaudio. Spotify-Lautstärke, Wiedergabe und Abmeldung bleiben im Spotify-Tab. Auf Mobilgeräten hängt gleichzeitige Audiowiedergabe vom Browser und Betriebssystem ab.
 
 ## Sprachaufnahmen neu erzeugen
 

@@ -1,0 +1,11 @@
+// User-supplied bookmarks only. No Spotify API, SDK, account tokens or embeds.
+export const SPOTIFY_LOGIN='https://accounts.spotify.com/login?continue=https%3A%2F%2Fopen.spotify.com%2F';
+export function spotifyPlaylist(input){const text=String(input??'').trim();let id;
+  const uri=/^spotify:playlist:([a-zA-Z0-9]{22})$/.exec(text);if(uri)id=uri[1];else{
+    try{const u=new URL(text);if(u.protocol!=='https:'||u.hostname!=='open.spotify.com'||u.port||u.username||u.password) return null;const match=/^\/(?:intl-[a-z]{2}\/)?playlist\/([a-zA-Z0-9]{22})\/?$/.exec(u.pathname);if(!match)return null;id=match[1];}catch{return null;}
+  }return {id,url:`https://open.spotify.com/playlist/${id}`};
+}
+export function spotifyLabel(text,fallback='Mein Spotify-Mix'){const label=Array.from(String(text??'').replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim()).slice(0,48).join('');return label||fallback;}
+export function normalizeSpotifyLinks(value={}){const stations=[],seen=new Set();for(const entry of Array.isArray(value?.stations)?value.stations:[]){const link=spotifyPlaylist(entry?.url);if(!link||seen.has(link.id))continue;seen.add(link.id);stations.push({...link,label:spotifyLabel(entry.label)});if(stations.length===20)break;}return {external:value?.external===true,stations,selectedId:stations.some(s=>s.id===value?.selectedId)?value.selectedId:stations[0]?.id||''};}
+export function addSpotifyLink(state,input,label){const link=spotifyPlaylist(input);if(!link)throw Error('Bitte einen vollständigen Spotify-Playlist-Link einfügen: https://open.spotify.com/playlist/…');const next=normalizeSpotifyLinks(state),index=next.stations.findIndex(s=>s.id===link.id);if(index<0&&next.stations.length>=20)throw Error('Du hast bereits 20 Mixe gespeichert. Entferne zuerst einen Eintrag.');const entry={...link,label:spotifyLabel(label,index<0?'Mein Spotify-Mix '+(next.stations.length+1):next.stations[index].label)};if(index<0)next.stations.push(entry);else next.stations[index]=entry;next.selectedId=link.id;return next;}
+export function removeSpotifyLink(state,id){const next=normalizeSpotifyLinks(state);next.stations=next.stations.filter(s=>s.id!==id);if(next.selectedId===id)next.selectedId=next.stations[0]?.id||'';return next;}
