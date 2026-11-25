@@ -8,7 +8,7 @@ GitHub bleibt die zentrale Quelle für den Spielcode und seine Änderungshistori
 
 Auf diesem Server soll unter einer gemeinsamen Domain ausschließlich die jeweils **neueste erfolgreich geprüfte Version aus main** erreichbar sein. Künftige Änderungen werden weiter nach GitHub übertragen und sollen anschließend automatisch auf Hetzner bereitgestellt werden. Alte Spielversionen erhalten dort keine eigenen öffentlichen Adressen; der Git-Verlauf auf GitHub bleibt erhalten.
 
-**Stand der Einrichtung:** Diese Betriebsweise ist vereinbart und dokumentiert. Die öffentliche Hetzner-Serveradresse und die Domain sind noch nicht bestätigt; automatische Bereitstellung, DNS und HTTPS sind noch nicht eingerichtet. Die bisherigen lokalen Testanwendungen bleiben nutzbar.
+**Stand der Einrichtung:** Diese Betriebsweise ist vereinbart und dokumentiert. Eine Serveradresse wurde vom Projektinhaber benannt und antwortet per SSH. Der vorhandene SSH-Schlüssel wird noch nicht akzeptiert; der Verwaltungszugang muss zunächst freigeschaltet werden. Domain, automatische Bereitstellung, DNS und HTTPS sind noch nicht eingerichtet. Die bisherigen lokalen Testanwendungen bleiben nutzbar.
 
 Begriffe, Vorgehen und nächste Schritte stehen in [HOSTING.md](HOSTING.md).
 

@@ -12,7 +12,7 @@ GitHub bleibt die zentrale Quelle für das Spiel:
 
 Der Git-Verlauf bleibt vollständig auf GitHub. Die Vorgabe „nur die aktuelle Version auf dem Server“ bedeutet, dass Spieler unter einer festen Adresse die aktuelle Fassung erhalten; sie bedeutet keine Löschung alter Git-Commits. Automatische Updates sollen fehlerhafte Fassungen abfangen, bevor sie eine funktionierende Instanz ersetzen.
 
-**Aktueller Stand:** Die Serveradresse und Domain sind noch nicht bestätigt. Auf Hetzner wurde im Rahmen dieser Einrichtung noch keine bestätigte Veröffentlichung vorgenommen. Die automatische Aktualisierung, Domainkonfiguration und HTTPS-Einrichtung sind ein Plan und noch keine laufende Funktion.
+**Aktueller Stand:** Eine Serveradresse wurde vom Projektinhaber benannt und antwortet per SSH; der vorhandene SSH-Schlüssel wird beim Root-Zugang noch abgewiesen. Der Projektinhaber hat Zugriff auf ein Server-Terminal und kann dort den zu seinem lokalen Schlüssel gehörenden öffentlichen Schlüssel freischalten. Die Domain ist noch nicht ausgewählt. Auf Hetzner wurde im Rahmen dieser Einrichtung noch keine bestätigte Veröffentlichung vorgenommen. Die automatische Aktualisierung, Domainkonfiguration und HTTPS-Einrichtung sind ein Plan und noch keine laufende Funktion.
 
 ## Die Begriffe
 
