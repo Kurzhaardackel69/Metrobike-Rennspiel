@@ -108,3 +108,14 @@ Die portable ZIP vollständig entpacken und Metorbike-Racing.exe starten. Spiel,
 Einzelspieler: Die Eingabefelder im Startfenster empfangen jetzt Maus- und Touch-Eingaben. Name, 1–10 Runden und Locker/Normal/Profi werden beim Rennstart übernommen.
 
 Build: npm ci --prefix multiplayer, npm install --prefix desktop --no-package-lock, node desktop/node_modules/electron/install.js und danach node scripts/build-windows.mjs auf Windows. GitHub Actions „Windows application“ prüft die tatsächliche EXE, Rennoptionen und fünf Spielclients. Electron 45.5.0 enthält seine Lizenzen im ZIP; GPLv3-Quelltext liegt in diesem Repository.
+
+
+## Multiplayer 1.7: flüssigere Darstellung
+
+Die Kamera und das eigene Bike verwenden dieselbe vorausberechnete Position. Gegner werden zwischen gepufferten Serverständen gezeichnet; unregelmäßige Paketankunft verändert den Renderzeitpunkt nur allmählich. Das eigene Bike verwendet dieselbe Physik wie der Server mit sanftem Abgleich. Treffer, Checkpoints und Ergebnisse bleiben serverseitig. Nach langen Paketlücken wird nur kurz extrapoliert.
+
+Eingaben laufen mit 30 Hz unabhängig von der Bildwiederholung. Der Server simuliert mit 60 Hz und versendet 20 Rennstände pro Sekunde, ohne Restzeit im Sendeintervall zu verwerfen. Ping-Antworten erlauben eine Laufzeitmessung. Protokoll 3: Alle Teilnehmer und der Server müssen diese Version verwenden.
+
+Das Gelände wird einmal abgetastet und sein projizierter Pfad pro Bild für alle Bahnen wiederverwendet. Die Oberfläche aktualisiert Spielerlisten nur bei Änderungen. Der 2D-Canvas hat ein Pixelbudget und senkt die Auflösung bei zu hoher Zeichenzeit. FPS und Ping oben rechts unterscheiden Bildrate und Netzwerkverzögerung.
+
+Tests prüfen Paketjitter, Vorhersage vor dem nächsten Paket, Serverkorrekturen, Teleports und Geländegenauigkeit. Die Windows-Prüfung misst zusätzlich die Darstellung ohne künstliche RAF-Drosselung. Messwerte auf dem Software-Renderer des CI-Rechners garantieren keine bestimmte Bildrate auf anderen Geräten.

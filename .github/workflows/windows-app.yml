@@ -21,11 +21,20 @@ jobs:
         run: |
           npm install --no-save --package-lock=false playwright@1.65.1
           node scripts/check-windows.mjs
+      - name: Save executable identity
+        shell: pwsh
+        run: (Get-FileHash artifacts/Metorbike-Racing-1.7.0-Windows/Metorbike-Racing.exe -Algorithm SHA256).Hash | Set-Content artifacts/windows-checks/exe.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Metorbike-Windows-checks
+          path: artifacts/windows-checks/
+          retention-days: 14
       - name: Create portable ZIP
         shell: pwsh
         run: |
-          Compress-Archive -LiteralPath artifacts/Metorbike-Racing-1.6.0-Windows -DestinationPath artifacts/Metorbike-Racing-1.6.0-Windows.zip
-          (Get-FileHash artifacts/Metorbike-Racing-1.6.0-Windows.zip -Algorithm SHA256).Hash | Set-Content artifacts/Metorbike-Racing-1.6.0-Windows.zip.sha256
+          Compress-Archive -LiteralPath artifacts/Metorbike-Racing-1.7.0-Windows -DestinationPath artifacts/Metorbike-Racing-1.7.0-Windows.zip
+          (Get-FileHash artifacts/Metorbike-Racing-1.7.0-Windows.zip -Algorithm SHA256).Hash | Set-Content artifacts/Metorbike-Racing-1.7.0-Windows.zip.sha256
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,7 +1,7 @@
 // Original side-view arcade motocross model. Only the server advances riders.
 import {hornState,updateHorn} from './horn.mjs';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-export const MX_LENGTH=1100,MX_VERSION=2,MX_MAX_PLAYERS=5;
+export const MX_LENGTH=1100,MX_VERSION=3,MX_MAX_PLAYERS=5;
 export function terrainHeight(x){const blend=clamp((x-25)/25,0,1),wave=1.4*Math.sin(x*.041)+.65*Math.sin(x*.103);let jumps=0;for(let c=85;c<MX_LENGTH;c+=95)jumps+=3.2*Math.exp(-(((x-c)/8)**2));return (wave+jumps)*blend;}
 export function terrainSlope(x){return (terrainHeight(x+.1)-terrainHeight(x-.1))/.2;}
 const angleDifference=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -24,4 +24,4 @@ export function updateMxPlayer(p,dt,time,events=[]){dt=clamp(dt,0,.04);if(p.fini
 }
 export function updateMxRace(players,dt,time){const events=[];for(const p of players)updateMxPlayer(p,dt,time,events);for(const p of players){if(p.finished||p.crashTime>0||!p.input.fire||p.shotCooldown>0)continue;p.shotCooldown=.65;const target=players.filter(b=>b!==p&&!b.finished&&!b.crashTime&&b.x>p.x&&b.x-p.x<38&&Math.abs(b.y-p.y)<3).sort((a,b)=>a.x-b.x)[0];events.push({type:'shot',playerId:p.id,x:p.x,y:p.y,targetX:target?.x||p.x+35,targetY:target?.y||p.y});if(target&&crashMx(target))events.push({type:'hit',playerId:target.id,by:p.id});}return events;}
 export function renderLanes(players,localId){const others=players.filter(p=>p.id!==localId);return [...others.map((p,i)=>({...p,front:false,lane:others.length-i})),...players.filter(p=>p.id===localId).map(p=>({...p,front:true,lane:0}))];}
-export function mxSnapshot(p){const {id,name,color,x,y,vx,vy,angle,grounded,crashTime,crashes,finished,finishTime,boost,horns}=p;return {id,name,color,x,y,vx,vy,angle,grounded,crashTime,crashes,finished,finishTime,boost,horns};}
+export function mxSnapshot(p){const {id,name,color,x,y,vx,vy,angle,grounded,crashTime,crashes,finished,finishTime,boost,horns,omega,bestX,hornCooldown,previousHorn,previousReset}=p;return {id,name,color,x,y,vx,vy,angle,grounded,crashTime,crashes,finished,finishTime,boost,horns,omega,bestX,hornCooldown,previousHorn,previousReset};}
