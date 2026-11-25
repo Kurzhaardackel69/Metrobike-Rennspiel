@@ -41,3 +41,7 @@ The Android app uses AndroidX WebKit 1.14.0 and its AndroidX dependencies, Copyr
 ## Local multiplayer server
 
 The optional Node.js test server uses ws 8.23.0 (MIT), copyright the ws contributors. See multiplayer/WS-LICENSE.txt and https://github.com/websockets/ws . It is not bundled in the website or Android APK. The side-view track, drawings and motorcycle physics are original game code; no Mad Skills Motocross assets or code are used.
+
+
+## Windows runtime
+The portable Windows application bundles Electron 45.5.0 (MIT), Chromium and Node.js. LICENSE.electron.txt and LICENSES.chromium.html are included beside the executable. Source: https://github.com/electron/electron/releases/tag/v45.5.0 . Electron is not included in the browser or Android build.

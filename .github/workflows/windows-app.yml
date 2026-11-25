@@ -1,0 +1,36 @@
+name: Windows application
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --prefix multiplayer
+      - run: npm install --prefix desktop --no-package-lock
+      - run: node --test tests/*.test.mjs
+      - run: node scripts/build-windows.mjs
+      - name: Test packaged Windows application
+        run: |
+          npm install --no-save --package-lock=false playwright@1.65.1
+          node scripts/check-windows.mjs
+      - name: Create portable ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -LiteralPath artifacts/Metorbike-Racing-1.6.0-Windows -DestinationPath artifacts/Metorbike-Racing-1.6.0-Windows.zip
+          (Get-FileHash artifacts/Metorbike-Racing-1.6.0-Windows.zip -Algorithm SHA256).Hash | Set-Content artifacts/Metorbike-Racing-1.6.0-Windows.zip.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Metorbike-Windows
+          path: |
+            artifacts/*.zip
+            artifacts/*.sha256
+            artifacts/windows-checks/
+          retention-days: 30

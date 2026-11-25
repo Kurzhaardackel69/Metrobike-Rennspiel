@@ -70,7 +70,7 @@ Clubradio-Musikregler und globaler Spiel-Mute steuern ausschließlich Spielaudio
 
 ## Sprachaufnahmen neu erzeugen
 
-`scripts/bake-voices.mjs` verwendet das offizielle Piper-Windows-Paket 2023.11.14-2 und die Modelle `de_DE-thorsten_emotional-medium` sowie `de_DE-kerstin-low` vom Tag `v1.0.0`. Die CC0-Datensatzquellen und Downloadlinks sind in `THIRD_PARTY_NOTICES.md` dokumentiert. Werkzeug und Modelle liegen nur im ignorierten `reference/`-Ordner; ausgeliefert werden 24 WAV-Aufnahmen mit zusammen etwa 5 MB. Nach Änderung der Standardsprüche `node scripts/bake-voices.mjs` ausführen.
+`scripts/bake-voices.mjs` verwendet das offizielle Piper-Windows-Paket 2023.11.14-2 und die Modelle `de_DE-thorsten_emotional-medium` sowie `de_DE-kerstin-low` vom Tag `v1.0.0`. Die CC0-Datensatzquellen und Downloadlinks sind in `THIRD_PARTY_NOTICES.md` dokumentiert. Werkzeug und Modelle liegen nur im ignorierten `reference/`-Ordner; ausgeliefert werden 25 WAV-Aufnahmen mit zusammen etwa 5 MB. Nach Änderung der Standardsprüche `node scripts/bake-voices.mjs` ausführen.
 
 ## Referenzen zur Fahrphysik
 
@@ -84,7 +84,7 @@ Das native Android-Projekt liegt unter android/. Es enthält das Spiel lokal, l�
 
 Im Radio „Spotify extern“ wählen und „In Spotify-App öffnen“ verwenden. Nach dem Starten der Musik in Spotify zum Spiel zurückwechseln. Ein Spotify-Webplayer-Tab muss für seine eigene Wiedergabe offen bleiben; die Spotify-App ist davon unabhängig. Damit sie auf Android nicht vom Spielaudio unterbrochen wird, wird das Spielaudio während dieser Auswahl pausiert. Bei Appwechsel pausiert das Rennen. Beim Beenden oder Neuladen endet die aktive Spotify-Auswahl, gespeicherte Radios bleiben erhalten. Das Spiel besitzt keinen Spotify-Kontozugriff und kann die unabhängige Spotify-App weder pausieren noch abmelden.
 
-Der GitHub-Actions-Workflow „Android APK“ prüft sechs Displaygrößen, Rotation, Spotify-Auswahl und 50 Simulationstests. Danach baut und signaturprüft er die Debug-APK. Das herunterladbare Artefakt heißt „Metorbike-Racing-APK“. Der lokale Build benötigt JDK 17, Android SDK 35 und Gradle 8.13: erst node scripts/prepare-android.mjs, dann gradle -p android assembleDebug. Das Ergebnis liegt unter android/app/build/outputs/apk/debug/app-debug.apk.
+Der GitHub-Actions-Workflow „Android APK“ prüft sechs Displaygrößen, Rotation, Spotify-Auswahl und 58 Simulationstests. Danach baut und signaturprüft er die Debug-APK. Das herunterladbare Artefakt heißt „Metorbike-Racing-APK“. Der lokale Build benötigt JDK 17, Android SDK 35 und Gradle 8.13: erst node scripts/prepare-android.mjs, dann gradle -p android assembleDebug. Das Ergebnis liegt unter android/app/build/outputs/apk/debug/app-debug.apk.
 
 Es handelt sich um eine signierte Test-APK, keine Play-Store-Version. Der CI-Debug-Schlüssel ist nur für den jeweiligen Build gedacht; ein späterer Build kann eine Neuinstallation erfordern. Für eine dauerhafte Release-Veröffentlichung ist ein eigener, sicher verwahrter Signierschlüssel notwendig. Die App wurde nicht auf einem echten Telefon mit angemeldetem Spotify-Konto geprüft.
 
@@ -92,8 +92,19 @@ Es handelt sich um eine signierte Test-APK, keine Play-Store-Version. Der CI-Deb
 
 Die Lenkung ist gegenüber Version 1.4 invertiert (Tastatur und Touch). Das linke Daumenpad steuert jetzt zwei Achsen: hoch = Gas, runter = Bremse, seitlich = Lenken beziehungsweise Neigung im 2D-Modus. So funktionieren Gas und Lenken gleichzeitig. Boost liegt ebenfalls links; rechts sind ausschließlich FEUER und HUPE. H löst am PC die Hupe aus. Der Fahrer ruft mit einer neuen vorbereiteten Sprachaufnahme „Aus dem Weg, ihr Geringverdiener!“. Eine Haltesperre und vier Sekunden Abstand verhindern überlappende Wiederholungen.
 
-**2D MX** öffnet den neuen, separaten Seitenansicht-Modus. Der Node-WebSocket-Server verwaltet Räume mit maximal zwei Spielern und simuliert Positionen, Sprünge, Landungen, Treffer und Zielzeiten selbst. Clients senden nur Bedieneingaben. Jedes Gerät zeichnet sein eigenes Bike in der vorderen Bahn und das andere in der hinteren Bahn; das ändert die Rennphysik nicht. Die Illustrationen und Strecke sind eigene Inhalte.
+**2D MX** öffnet den neuen, separaten Seitenansicht-Modus. Der Node-WebSocket-Server verwaltet Räume mit maximal fünf Spielern und simuliert Positionen, Sprünge, Landungen, Treffer und Zielzeiten selbst. Clients senden nur Bedieneingaben. Jedes Gerät zeichnet sein eigenes Bike in der vorderen Bahn und die anderen in hinteren Bahnen; das ändert die Rennphysik nicht. Die Illustrationen und Strecke sind eigene Inhalte.
 
 Lokaler Start: npm ci --prefix multiplayer, danach node multiplayer/server.mjs --lan. Auf dem PC http://127.0.0.1:8787 in zwei Fenstern öffnen. Spieler 1 erstellt einen Raum; Spieler 2 tritt mit dem angezeigten sechsstelligen Code bei. Anschließend startet der Gastgeber das Duell. Auf dem Handy im selben WLAN http://IP-DES-PCs:8787 öffnen. Der Server gibt die passenden LAN-Adressen aus.
 
 Für eine öffentliche Verbindung ist später ein WebSocket-Server hinter TLS (wss://) nötig. Dieser Schritt ist noch nicht eingerichtet. HTTPS-Seite und APK können keine unverschlüsselte Verbindung zu einer beliebigen LAN-Adresse erzwingen; der lokale Handy-Test erfolgt deshalb im Browser über die HTTP-Adresse des Testservers. Es werden keine Spotify-Zugangsdaten an den Multiplayer-Server gesendet.
+
+
+## Windows-Anwendung 1.6.0
+
+Die portable ZIP vollständig entpacken und Metorbike-Racing.exe starten. Spiel, Chromium und lokaler Server sind enthalten; Node.js muss beim Empfänger nicht installiert sein. Windows 10/11 mit 64 Bit wird unterstützt. Die Anwendung ist eine unsignierte Testversion.
+
+2–5 Spieler im selben erreichbaren Netzwerk: Der Gastgeber erstellt unter 2D MX einen Raum und teilt seine Serveradresse (Menü Spiel → Serveradresse kopieren) sowie den Raumcode. Alle anderen tragen dieselbe Serveradresse und den Code ein. Der Gastgeber startet, sobald alle verbunden sind, und lässt die Anwendung offen. Der Server endet mit dem Schließen. Sind 8787 bereits belegt, verwendet die Anwendung einen freien Port bis 8797. Eingehende Verbindungen müssen in der Windows-Firewall erlaubt sein. Ein Gast-WLAN kann Geräte isolieren. Für verschiedene Internetanschlüsse braucht es später einen gemeinsam erreichbaren Server.
+
+Einzelspieler: Die Eingabefelder im Startfenster empfangen jetzt Maus- und Touch-Eingaben. Name, 1–10 Runden und Locker/Normal/Profi werden beim Rennstart übernommen.
+
+Build: npm ci --prefix multiplayer, npm install --prefix desktop --no-package-lock, danach node scripts/build-windows.mjs auf Windows. GitHub Actions „Windows application“ prüft die tatsächliche EXE, Rennoptionen und fünf Spielclients. Electron 45.5.0 enthält seine Lizenzen im ZIP; GPLv3-Quelltext liegt in diesem Repository.

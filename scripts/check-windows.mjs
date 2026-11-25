@@ -1,0 +1,24 @@
+// Regression test of the actual packaged executable, using its bundled Chromium.
+import {_electron} from 'playwright';
+import assert from 'node:assert/strict';
+import {mkdir,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+const out='artifacts/windows-checks';await mkdir(out,{recursive:true});
+const app=await _electron.launch({executablePath:path.resolve('artifacts/Metorbike-Racing-1.6.0-Windows/Metorbike-Racing.exe'),args:['--use-angle=swiftshader','--enable-unsafe-swiftshader'],timeout:60000});
+const errors=[],pages=[];let passed=false;
+try{
+ const page=await app.firstWindow();pages.push(page);page.setDefaultTimeout(45000);page.on('pageerror',e=>errors.push(e.message));await page.locator('#loading').waitFor({state:'hidden'});
+ await page.evaluate(()=>{const raf=requestAnimationFrame.bind(window);window.requestAnimationFrame=cb=>raf(()=>setTimeout(()=>cb(performance.now()),250));});assert.equal(await page.evaluate(()=>typeof window.require),'undefined');assert.ok(await page.evaluate(()=>!!window.MetorbikeDesktop));
+ for(const id of ['laps-select','difficulty-select','player-name'])assert.equal(await page.locator('#'+id).evaluate(e=>{const b=e.getBoundingClientRect();return document.elementFromPoint(b.x+b.width/2,b.y+b.height/2)===e;}),true,id+' must receive real pointer clicks');
+ await page.locator('#player-name').click();await page.keyboard.type('PC Test');await page.locator('#laps-select').selectOption('2');await page.locator('#difficulty-select').selectOption('hard');await page.locator('#start-button').click();await page.locator('#race-ui').waitFor({state:'visible'});
+ assert.equal(await page.locator('#race-ui').getAttribute('data-laps'),'2');assert.equal(await page.locator('#race-ui').getAttribute('data-difficulty'),'hard');assert.equal(await page.locator('#hud-player-name').textContent(),'PC Test');
+ await page.locator('#pause-button').click();await page.locator('#garage-button').click();await page.locator('#mx-open').click();
+ const info=await page.evaluate(()=>window.MetorbikeDesktop.getServerInfo());assert.ok(info.localUrl.startsWith('http://127.0.0.1:'));
+ for(let i=1;i<5;i++){const windowEvent=app.waitForEvent('window');await app.evaluate(({BrowserWindow})=>{new BrowserWindow({width:1000,height:700,show:false,webPreferences:{nodeIntegration:false,contextIsolation:true,sandbox:true,backgroundThrottling:false}});});const client=await windowEvent;pages.push(client);client.setDefaultTimeout(45000);client.on('pageerror',e=>errors.push(e.message));await client.addInitScript(()=>{const raf=requestAnimationFrame.bind(window);window.requestAnimationFrame=cb=>raf(()=>setTimeout(()=>cb(performance.now()),250));});await client.goto(info.localUrl);await client.locator('#loading').waitFor({state:'hidden'});await client.locator('#mx-open').click();}
+ await pages[0].locator('#mx-name').fill('Host');await pages[0].locator('#mx-create').click();await pages[0].waitForFunction(()=>document.querySelector('#mx-room-code').textContent.startsWith('RAUM '));const code=(await pages[0].locator('#mx-room-code').textContent()).replace('RAUM ','');
+ for(let i=1;i<5;i++){await pages[i].locator('#mx-name').fill('Rider '+(i+1));await pages[i].locator('#mx-code').fill(code);await pages[i].locator('#mx-join').click();await pages[i].waitForFunction(()=>document.querySelector('#mx-canvas').dataset.playerCount===String(document.querySelectorAll('#mx-players li').length)&&document.querySelectorAll('#mx-players li').length>=2);}
+ for(const client of pages)await client.waitForFunction(()=>document.querySelector('#mx-canvas').dataset.playerCount==='5');await pages[0].locator('#mx-start').click();
+ const ids=[];for(const client of pages){await client.waitForFunction(()=>document.querySelector('#mx-canvas').dataset.phase==='running');ids.push(await client.locator('#mx-canvas').evaluate(c=>({...c.dataset})));}
+ assert.equal(new Set(ids.map(x=>x.frontPlayerId)).size,5);for(const state of ids){const back=state.backPlayerIds.split(',');assert.equal(back.length,4);assert.ok(!back.includes(state.frontPlayerId));}
+ await pages[0].keyboard.down('KeyW');await pages[0].waitForTimeout(1200);await pages[0].keyboard.up('KeyW');await pages[0].screenshot({path:out+'/five-player-windows.png',timeout:45000});assert.deepEqual(errors,[]);passed=true;
+}finally{await writeFile(out+'/report.json',JSON.stringify({passed,checks:['packaged EXE starts','sandboxed renderer','singleplayer name, laps and difficulty selectable','five-player server connection','each local rider in front'],errors},null,2));await app.close();}
