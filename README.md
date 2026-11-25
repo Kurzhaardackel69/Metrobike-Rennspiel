@@ -87,3 +87,13 @@ Im Radio „Spotify extern“ wählen und „In Spotify-App öffnen“ verwenden
 Der GitHub-Actions-Workflow „Android APK“ prüft sechs Displaygrößen, Rotation, Spotify-Auswahl und 50 Simulationstests. Danach baut und signaturprüft er die Debug-APK. Das herunterladbare Artefakt heißt „Metorbike-Racing-APK“. Der lokale Build benötigt JDK 17, Android SDK 35 und Gradle 8.13: erst node scripts/prepare-android.mjs, dann gradle -p android assembleDebug. Das Ergebnis liegt unter android/app/build/outputs/apk/debug/app-debug.apk.
 
 Es handelt sich um eine signierte Test-APK, keine Play-Store-Version. Der CI-Debug-Schlüssel ist nur für den jeweiligen Build gedacht; ein späterer Build kann eine Neuinstallation erfordern. Für eine dauerhafte Release-Veröffentlichung ist ein eigener, sicher verwahrter Signierschlüssel notwendig. Die App wurde nicht auf einem echten Telefon mit angemeldetem Spotify-Konto geprüft.
+
+## Steuerung 1.5 und lokales MX-Duell
+
+Die Lenkung ist gegenüber Version 1.4 invertiert (Tastatur und Touch). Das linke Daumenpad steuert jetzt zwei Achsen: hoch = Gas, runter = Bremse, seitlich = Lenken beziehungsweise Neigung im 2D-Modus. So funktionieren Gas und Lenken gleichzeitig. Boost liegt ebenfalls links; rechts sind ausschließlich FEUER und HUPE. H löst am PC die Hupe aus. Der Fahrer ruft mit einer neuen vorbereiteten Sprachaufnahme „Aus dem Weg, ihr Geringverdiener!“. Eine Haltesperre und vier Sekunden Abstand verhindern überlappende Wiederholungen.
+
+**2D MX** öffnet den neuen, separaten Seitenansicht-Modus. Der Node-WebSocket-Server verwaltet Räume mit maximal zwei Spielern und simuliert Positionen, Sprünge, Landungen, Treffer und Zielzeiten selbst. Clients senden nur Bedieneingaben. Jedes Gerät zeichnet sein eigenes Bike in der vorderen Bahn und das andere in der hinteren Bahn; das ändert die Rennphysik nicht. Die Illustrationen und Strecke sind eigene Inhalte.
+
+Lokaler Start: npm ci --prefix multiplayer, danach node multiplayer/server.mjs --lan. Auf dem PC http://127.0.0.1:8787 in zwei Fenstern öffnen. Spieler 1 erstellt einen Raum; Spieler 2 tritt mit dem angezeigten sechsstelligen Code bei. Anschließend startet der Gastgeber das Duell. Auf dem Handy im selben WLAN http://IP-DES-PCs:8787 öffnen. Der Server gibt die passenden LAN-Adressen aus.
+
+Für eine öffentliche Verbindung ist später ein WebSocket-Server hinter TLS (wss://) nötig. Dieser Schritt ist noch nicht eingerichtet. HTTPS-Seite und APK können keine unverschlüsselte Verbindung zu einer beliebigen LAN-Adresse erzwingen; der lokale Handy-Test erfolgt deshalb im Browser über die HTTP-Adresse des Testservers. Es werden keine Spotify-Zugangsdaten an den Multiplayer-Server gesendet.

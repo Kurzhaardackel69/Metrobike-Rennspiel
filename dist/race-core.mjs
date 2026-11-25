@@ -1,4 +1,5 @@
 import {POWER_CLASSES,DIFFICULTIES,normalizeBikeConfig,normalizeRaceSettings} from './bike-config.mjs';
+import {hornState,updateHorn} from './horn.mjs';
 import {combatState,updateCombat} from './combat.mjs';
 import {handlingState,updateHandling} from './riding-physics.mjs';
 export const TOTAL_LAPS=3,MAX_SPEED=31,BOOST_SPEED=43,RESCUE_DURATION=5.6,DROP_RELEASE=2.6,DROP_LANDING=3.7;
@@ -17,7 +18,7 @@ export function droppingProgress(elapsed){return clamp((elapsed-DROP_RELEASE)/(D
 export class Race{
   constructor(track,curvature=()=>0,settings={powerClass:4}){
     this.track=track;this.curvature=curvature;this.time=0;this.config=normalizeBikeConfig(settings);this.settings=normalizeRaceSettings(settings);this.totalLaps=this.settings.laps;this.difficulty=DIFFICULTIES[this.settings.difficulty];this.classStats=POWER_CLASSES[this.config.powerClass];this.maxSpeed=MAX_SPEED*this.classStats.speedScale;this.boostSpeed=BOOST_SPEED*this.classStats.speedScale;
-    this.player={...handlingState(),...combatState(),lastLapCrossing:0,name:this.settings.playerName,progress:0,offset:-1.6,speed:0,boost:1,boostActive:false,padTime:0,lap:1,laps:[],finished:false,finishTime:null,collisionCooldown:0,padIndex:-1,wheelie:0,stoppie:0,stoppieTime:0,previousBrake:false,rescue:null,helmetDirty:false,helmetImpactAge:99,falls:0,passengerReactionTime:0,passengerCooldown:0,lastPassengerStunt:null};
+    this.player={...handlingState(),...combatState(),...hornState(),lastLapCrossing:0,name:this.settings.playerName,progress:0,offset:-1.6,speed:0,boost:1,boostActive:false,padTime:0,lap:1,laps:[],finished:false,finishTime:null,collisionCooldown:0,padIndex:-1,wheelie:0,stoppie:0,stoppieTime:0,previousBrake:false,rescue:null,helmetDirty:false,helmetImpactAge:99,falls:0,passengerReactionTime:0,passengerCooldown:0,lastPassengerStunt:null};
     this.bots=['Mika','Jules','Alex','Sam','Robin'].map((name,i)=>({name,progress:7+i*6,offset:(i%2?-1:1)*2.3,speed:0,cruise:(23.7+i*.7)*this.classStats.speedScale*this.difficulty.speed,phase:i*1.8,finished:false,finishTime:null,colorIndex:(i+1)%4}));
     this.events=[];this.projectiles=[];this.lastSplit=0;
   }
@@ -31,6 +32,7 @@ export class Race{
     }}
   update(dt,input={}){
     dt=clamp(dt,0,.05);this.events.length=0;const p=this.player,finish=this.track.length*this.totalLaps;if(p.finished)return;this.time+=dt;p.helmetImpactAge+=dt;p.passengerReactionTime=Math.max(0,p.passengerReactionTime-dt);p.passengerCooldown=Math.max(0,p.passengerCooldown-dt);p.collisionCooldown=Math.max(0,p.collisionCooldown-dt);
+    const honked=updateHorn(p,dt,!!input.horn,!p.rescue);if(honked)this.events.push({type:'horn'});
     if(p.rescue){const r=p.rescue;r.elapsed+=dt;p.speed=0;p.boostActive=false;p.passengerReactionTime=0;Object.assign(p,handlingState());p.wheelie=p.stoppie=0;p.previousBrake=!!input.brake;r.pose=rescuePose(r);p.offset=r.pose.offset;
       if(!r.squawked&&r.elapsed>=1.08){r.squawked=true;this.events.push({type:'parrot'});}
       if(!r.released&&r.elapsed>=DROP_RELEASE){r.released=true;this.events.push({type:'dropping'});}

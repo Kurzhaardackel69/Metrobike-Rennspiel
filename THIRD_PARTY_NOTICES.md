@@ -37,3 +37,7 @@ The three radio compositions, all instrument synthesis, gun effects, helmet drip
 ## Android host
 
 The Android app uses AndroidX WebKit 1.14.0 and its AndroidX dependencies, Copyright The Android Open Source Project, under Apache License 2.0. See android/ANDROIDX-LICENSE.txt. Android system WebView is provided by the device and is not bundled. The app does not include the Spotify SDK.
+
+## Local multiplayer server
+
+The optional Node.js test server uses ws 8.23.0 (MIT), copyright the ws contributors. See multiplayer/WS-LICENSE.txt and https://github.com/websockets/ws . It is not bundled in the website or Android APK. The side-view track, drawings and motorcycle physics are original game code; no Mad Skills Motocross assets or code are used.

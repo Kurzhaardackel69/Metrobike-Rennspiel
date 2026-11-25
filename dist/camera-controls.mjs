@@ -7,4 +7,5 @@ export const CAMERA_VIEWS={
 };
 const arrows={ArrowLeft:'left',ArrowRight:'right',ArrowDown:'front',ArrowUp:'top'};
 export function cameraView(keys){let view='chase';for(const key of keys)if(arrows[key])view=arrows[key];return view;}
-export function drivingInput(keys,touch={},steer=0){return {gas:keys.has('KeyW')||!!touch.gas,brake:keys.has('KeyS')||!!touch.brake,steer:steer||((keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)),fire:keys.has('KeyF')||!!touch.fire,boost:keys.has('ShiftLeft')||keys.has('ShiftRight')||keys.has('Space')||!!touch.boost};}
+export function touchStickInput(x,y){const clamp=v=>Math.max(-1,Math.min(1,v)),horizontal=clamp(x);return {steer:Math.abs(horizontal)<.08?0:horizontal,gas:y<-.22,brake:y>.22};}
+export function drivingInput(keys,touch={},steer=0){const direction=steer||((keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0));return {gas:keys.has('KeyW')||!!touch.gas,brake:keys.has('KeyS')||!!touch.brake,steer:direction===0?0:-direction,fire:keys.has('KeyF')||!!touch.fire,horn:keys.has('KeyH')||!!touch.horn,boost:keys.has('ShiftLeft')||keys.has('ShiftRight')||keys.has('Space')||!!touch.boost};}

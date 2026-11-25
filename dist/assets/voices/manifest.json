@@ -22,5 +22,6 @@
   "Aaaah! Aua!": "./assets/voices/hit-1.wav",
   "Aaah! Mein Bike!": "./assets/voices/hit-2.wav",
   "Aua! Aaah!": "./assets/voices/hit-3.wav",
-  "Lass den Scheiß!": "./assets/voices/passenger.wav"
+  "Lass den Scheiß!": "./assets/voices/passenger.wav",
+  "Aus dem Weg, ihr Geringverdiener!": "./assets/voices/horn.wav"
 }
