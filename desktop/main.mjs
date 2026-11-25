@@ -7,7 +7,7 @@ if(!app.requestSingleInstanceLock())app.quit();else{
  app.on('second-instance',()=>{if(window){if(window.isMinimized())window.restore();window.focus();}});
  app.on('window-all-closed',()=>app.quit());
  app.on('before-quit',event=>{if(server&&!stopping){event.preventDefault();stopping=true;server.close().finally(()=>app.quit());}});
- await app.whenReady();
+ app.whenReady().then(async()=>{
  try{
   server=createMxServer();let address;
   for(let port=8787;port<=8797;port++){try{address=await server.listen(port,'0.0.0.0');break;}catch(e){if(e.code!=='EADDRINUSE')throw e;}}
@@ -23,5 +23,6 @@ if(!app.requestSingleInstanceLock())app.quit();else{
   window.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback)=>callback(false));
   Menu.setApplicationMenu(Menu.buildFromTemplate([{label:'Spiel',submenu:[{label:'Serveradresse kopieren',click:()=>{if(addresses[0])clipboard.writeText(addresses[0].ws);}},{label:'Multiplayer-Anleitung',click:()=>dialog.showMessageBox(window,{title:'Gemeinsam testen',message:'2 bis 5 Spieler im selben Netzwerk',detail:'1. Alle entpacken die ZIP und starten Metorbike-Racing.exe.\n2. Der Gastgeber öffnet 2D MX und erstellt einen Raum.\n3. Er teilt seine Serveradresse und den Raumcode.\n4. Mitspieler tragen beides unter 2D MX ein und klicken Beitreten.\n5. Der Gastgeber startet, sobald alle verbunden sind.\n\nDeine Serveradressen:\n'+addresses.map(a=>a.ws).join('\n')+'\n\nGast-WLANs können Geräte voneinander trennen. Für verschiedene Internetanschlüsse braucht ihr später einen gemeinsamen öffentlichen Server.'})},{type:'separator'},{role:'quit',label:'Beenden'}]},{label:'Ansicht',submenu:[{role:'reload',label:'Neu laden'},{role:'togglefullscreen',label:'Vollbild'},{role:'resetZoom',label:'Originalgröße'}]}]));
   await window.loadURL(origin);
- }catch(error){dialog.showErrorBox('Metorbike konnte nicht starten',error.message);app.quit();}
+ }catch(error){console.error(error);dialog.showErrorBox('Metorbike konnte nicht starten',error.message);app.quit();}
+ });
 }
