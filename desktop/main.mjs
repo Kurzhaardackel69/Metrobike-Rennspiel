@@ -13,7 +13,7 @@ if(!app.requestSingleInstanceLock())app.quit();else{
   for(let port=8787;port<=8797;port++){try{address=await server.listen(port,'0.0.0.0');break;}catch(e){if(e.code!=='EADDRINUSE')throw e;}}
   if(!address)throw Error('Die Testserver-Ports 8787–8797 sind bereits belegt.');
   origin=`http://127.0.0.1:${address.port}`;
-  const addresses=Object.values(networkInterfaces()).flat().filter(a=>a.family==='IPv4'&&!a.internal&&/^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(a.address)).map(a=>({http:`http://${a.address}:${address.port}`,ws:`ws://${a.address}:${address.port}/ws`}));
+  const addresses=Object.entries(networkInterfaces()).filter(([name])=>!/virtual|vethernet|vmware|docker|wsl|loopback/i.test(name)).flatMap(([,list])=>list||[]).filter(a=>a.family==='IPv4'&&!a.internal&&/^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(a.address)).map(a=>({http:`http://${a.address}:${address.port}`,ws:`ws://${a.address}:${address.port}/ws`}));
   info={port:address.port,addresses,localUrl:origin};
   ipcMain.handle('metorbike:server-info',event=>{if(new URL(event.senderFrame.url).origin!==origin)throw Error('Invalid origin');return info;});
   window=new BrowserWindow({width:1440,height:900,minWidth:960,minHeight:640,backgroundColor:'#f1f0e9',title:'Metorbike Racing 1.6',webPreferences:{preload:fileURLToPath(new URL('./preload.cjs',import.meta.url)),nodeIntegration:false,contextIsolation:true,sandbox:true}});

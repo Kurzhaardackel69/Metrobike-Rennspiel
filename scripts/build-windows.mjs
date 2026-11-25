@@ -2,7 +2,7 @@ import {cp,mkdir,readFile,readdir,rename,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..'),version=JSON.parse(await readFile(path.join(root,'package.json'))).version;
 const out=path.join(root,'artifacts',`Metorbike-Racing-${version}-Windows`),app=path.join(out,'resources/app');
-await mkdir(out,{recursive:true});await cp(path.join(root,'desktop/node_modules/electron/dist'),out,{recursive:true});await rename(path.join(out,'electron.exe'),path.join(out,'Metorbike-Racing.exe'));await mkdir(app,{recursive:true});
+await mkdir(out,{recursive:true});await cp(path.join(root,'desktop/node_modules/electron/dist'),out,{recursive:true});await rename(path.join(out,'electron.exe'),path.join(out,'Metorbike-Racing.exe'));await rename(path.join(out,'LICENSE'),path.join(out,'LICENSE.electron.txt'));await mkdir(app,{recursive:true});
 for(const name of ['main.mjs','preload.cjs']){await mkdir(path.join(app,'desktop'),{recursive:true});await cp(path.join(root,'desktop',name),path.join(app,'desktop',name));}
 for(const name of ['server.mjs','package.json','WS-LICENSE.txt','node_modules/ws']){await mkdir(path.dirname(path.join(app,'multiplayer',name)),{recursive:true});await cp(path.join(root,'multiplayer',name),path.join(app,'multiplayer',name),{recursive:true});}
 await mkdir(path.join(app,'dist'),{recursive:true});for(const name of await readdir(path.join(root,'dist')))if(name!=='downloads')await cp(path.join(root,'dist',name),path.join(app,'dist',name),{recursive:true});

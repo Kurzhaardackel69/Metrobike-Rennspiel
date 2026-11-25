@@ -107,4 +107,4 @@ Die portable ZIP vollständig entpacken und Metorbike-Racing.exe starten. Spiel,
 
 Einzelspieler: Die Eingabefelder im Startfenster empfangen jetzt Maus- und Touch-Eingaben. Name, 1–10 Runden und Locker/Normal/Profi werden beim Rennstart übernommen.
 
-Build: npm ci --prefix multiplayer, npm install --prefix desktop --no-package-lock, danach node scripts/build-windows.mjs auf Windows. GitHub Actions „Windows application“ prüft die tatsächliche EXE, Rennoptionen und fünf Spielclients. Electron 45.5.0 enthält seine Lizenzen im ZIP; GPLv3-Quelltext liegt in diesem Repository.
+Build: npm ci --prefix multiplayer, npm install --prefix desktop --no-package-lock, node desktop/node_modules/electron/install.js und danach node scripts/build-windows.mjs auf Windows. GitHub Actions „Windows application“ prüft die tatsächliche EXE, Rennoptionen und fünf Spielclients. Electron 45.5.0 enthält seine Lizenzen im ZIP; GPLv3-Quelltext liegt in diesem Repository.
