@@ -2,6 +2,16 @@
 
 Ein 3D-Arcade-Rennspiel, inspiriert von den handgefertigten Café-Racern von [Metorbike Hamburg](https://metorbike.de/).
 
+## Hosting auf Hetzner und Verbindung zu GitHub
+
+GitHub bleibt die zentrale Quelle für den Spielcode und seine Änderungshistorie. Das Repository bleibt **Kurzhaardackel69/Metrobike-Rennspiel**, der maßgebliche Entwicklungszweig ist **main**. Als Ziel für den gemeinsamen Online-Spielbetrieb ist der Hetzner-Server des Projektinhabers vorgesehen.
+
+Auf diesem Server soll unter einer gemeinsamen Domain ausschließlich die jeweils **neueste erfolgreich geprüfte Version aus main** erreichbar sein. Künftige Änderungen werden weiter nach GitHub übertragen und sollen anschließend automatisch auf Hetzner bereitgestellt werden. Alte Spielversionen erhalten dort keine eigenen öffentlichen Adressen; der Git-Verlauf auf GitHub bleibt erhalten.
+
+**Stand der Einrichtung:** Diese Betriebsweise ist vereinbart und dokumentiert. Die öffentliche Hetzner-Serveradresse und die Domain sind noch nicht bestätigt; automatische Bereitstellung, DNS und HTTPS sind noch nicht eingerichtet. Die bisherigen lokalen Testanwendungen bleiben nutzbar.
+
+Begriffe, Vorgehen und nächste Schritte stehen in [HOSTING.md](HOSTING.md).
+
 - Zwei eigene Strecken: **Kartbahn** bei Tageslicht und **Sternenallee**, eine leuchtende Regenbogenstrecke im All.
 - **Spielername, 1–10 Runden und drei Schwierigkeiten** (Locker / Normal / Profi). Fünf Computerfahrer, Positionen, Minimap und persönliche Bestzeiten getrennt nach Strecke, Leistungsklasse, Rundenzahl und Schwierigkeit.
 - Detailliertes eigenes Café-Racer-Modell mit offenem U-Rahmen, tiefem Motor, Speichenrädern, gebohrten Bremsscheiben, Lederstruktur und reflektierendem Lack.
