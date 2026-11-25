@@ -2,7 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createMxServer} from '../multiplayer/server.mjs';
 import {mxPlayer,mxInput,updateMxPlayer,renderLanes,updateMxRace} from '../dist/mx-physics.mjs';
-import {mxServerUrl} from '../dist/mx-client.mjs';
+import {mxServerUrl,mxDefaultServer,mxConnectionMessage} from '../dist/mx-client.mjs';
+
+test('LAN page uses its PC host instead of an old phone loopback bookmark and explains failed connections',()=>{
+ assert.equal(mxDefaultServer({protocol:'http:',port:'8787',host:'192.168.189.101:8787'},'ws://127.0.0.1:8787/ws'),'ws://192.168.189.101:8787/ws');
+ assert.equal(mxDefaultServer({protocol:'https:',port:'',host:'example.com'},'wss://race.example/ws'),'wss://race.example/ws');
+ assert.match(mxConnectionMessage('ws://192.168.189.101:8787/ws',{code:1006}),/Gast-WLAN/);
+ assert.match(mxConnectionMessage('ws://localhost',{code:1000,reason:'Raum abgelaufen'},true),/Raum abgelaufen/);
+});
 
 test('MX physics can finish, brakes stop, airborne lean changes rotation, and hits cause a crash',()=>{
  const p=mxPlayer('a','A');p.input={gas:true};for(let n=0;n<12000&&!p.finished;n++)updateMxPlayer(p,1/60,n/60);assert.equal(p.finished,true);assert.ok(p.finishTime>30);
