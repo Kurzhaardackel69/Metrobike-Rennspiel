@@ -1,0 +1,11 @@
+# Lokal prüfen: docker compose up -d --build, dann http://localhost:8787 öffnen.
+name: metorbike-rennspiel
+services:
+  rennspiel:
+    build: .
+    restart: unless-stopped
+    read_only: true
+    environment:
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8787,http://127.0.0.1:8787}
+    ports:
+      - "127.0.0.1:8787:8787"

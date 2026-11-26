@@ -78,3 +78,13 @@ Bei einer Aktualisierung kann die laufende Rennsimulation neu starten. Räume un
 - [Hetzner: A-Eintrag für IPv4](https://docs.hetzner.com/networking/dns/record-types/a-record/)
 - [Caddy: automatisches HTTPS](https://caddyserver.com/docs/automatic-https)
 - [Caddy: Reverse Proxy und WebSocket-Verbindungen](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy)
+
+## Umsetzung im Intranet (Stand 26.11.2026)
+
+Das Spiel läuft als eigener Container neben dem Intranet auf demselben Hetzner-Server (`/srv/rennspiel`) unter `https://rennen.metorbike.de`.
+
+- Das Image (`Dockerfile`) führt beim Bauen Syntaxprüfung und alle Tests aus. Scheitert etwas, entsteht kein Image und die laufende Fassung bleibt. Im Image liegen nur `dist/` ohne Downloads und der Rennserver (rund 15 MB Spiel plus Node).
+- Ein offener Port fehlt absichtlich (`docker-compose.server.yml`). Der Caddy des Intranets (Repository metorbike-erp, `Caddyfile.server`) erreicht das Spiel über das Netzwerk `rennspiel`, das die ERP-Seite anlegt. App und Datenbank des Intranets sind für das Spiel nicht erreichbar.
+- Einstieg: fünfmal auf „Engineering“ in der oberen Leiste, dann die Kachel auf der versteckten Seite `/spiele`. Der Link hängt `#intranet=1&name=<Benutzer>` an. Damit tritt das Spiel unter **2D MX** automatisch dem gemeinsamen Warteraum bei (Nachricht `lobby`). Der Erste ist Gastgeber und gibt das Rennen frei. Läuft schon ein Rennen, öffnet sich ein neuer Warteraum.
+- Update: Stand nach GitHub `main` senden, dann `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\server-update.ps1` (SSH-Schlüssel im ssh-agent). Laufende Rennen gehen beim Wechsel verloren.
+- Lokal: `docker compose up -d --build`, dann `http://localhost:8787/#intranet=1&name=Test` in zwei Tabs.

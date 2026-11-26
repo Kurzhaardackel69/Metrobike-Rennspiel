@@ -1,0 +1,19 @@
+# Ergänzung für den Hetzner-Server (/srv/rennspiel), Start mit scripts/server-update.ps1.
+# Kein offener Port: nur der Caddy des Intranets (metorbike-erp, Netzwerk „rennspiel“) erreicht das Spiel unter rennen.metorbike.de.
+# Das Netzwerk legt die ERP-Seite an; das Spiel sieht weder App noch Datenbank des Intranets.
+services:
+  rennspiel:
+    ports: !reset []
+    environment:
+      ALLOWED_ORIGINS: https://rennen.metorbike.de
+    mem_limit: 256m
+    networks: [rennspiel]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  rennspiel:
+    external: true

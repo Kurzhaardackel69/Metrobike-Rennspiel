@@ -3,3 +3,6 @@
 @media(max-height:360px) and (orientation:landscape){.mx-controls .mx-pad{width:150px;height:132px}.mx-controls .pedals>button{width:70px;height:70px}.mx-controls #mx-boost{width:46px;height:46px}.mx-top>strong{font-size:16px}.mx-top>strong span{font-size:6px}#mx-position{top:60px}#mx-caption{font-size:11px;max-width:70%}.mx-lobby-card .eyebrow{font-size:6px}}
 
 #mx-network{font-size:9px;letter-spacing:0;margin-top:3px;white-space:nowrap;opacity:.8}@media(max-height:450px){#mx-network{font-size:7px}}
+
+/* Aus dem Intranet gestartet: keine Serveradresse und kein Raumcode */
+.mx-intranet label[for="mx-server"],.mx-intranet #mx-server,.mx-intranet .mx-lobby-actions label,.mx-intranet #mx-join,.mx-intranet #mx-room-code,.mx-intranet .mx-help:last-of-type{display:none}

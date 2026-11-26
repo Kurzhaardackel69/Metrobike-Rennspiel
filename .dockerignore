@@ -1,0 +1,10 @@
+**/node_modules
+.git
+android
+desktop
+artifacts
+reference
+*.apk
+*.zip
+*.tar.gz
+dist/downloads
