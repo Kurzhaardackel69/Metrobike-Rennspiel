@@ -1,18 +1,21 @@
 # Übergabe für Claude · Metorbike Racing Club
 
-Stand 26. November 2026. Das Repository [Kurzhaardackel69/Metrobike-Rennspiel](https://github.com/Kurzhaardackel69/Metrobike-Rennspiel) ist die Quelle für den Code. Entwickelt wird auf `main`. Der aktuelle Spielstand ist **1.7.0**, Multiplayer-Protokoll **3**. [README.md](README.md) beschreibt Spiel und Builds. [HOSTING.md](HOSTING.md) beschreibt das geplante Hetzner-Hosting.
+Stand 26. November 2026. Das Repository [Kurzhaardackel69/Metrobike-Rennspiel](https://github.com/Kurzhaardackel69/Metrobike-Rennspiel) ist die Quelle für den Code. Entwickelt wird auf `main`. Der aktuelle Spielstand ist **1.7.0**, Multiplayer-Protokoll **4**. [README.md](README.md) beschreibt Spiel und Builds. [HOSTING.md](HOSTING.md) beschreibt das geplante Hetzner-Hosting.
 
 ## Spiel und Architektur
 
 | Bereich | Einstieg |
 | --- | --- |
 | Browser und 3D-Einzelspieler | `dist/index.html`, `dist/game.js`, `dist/race-core.mjs`, `dist/world.js` |
+| Startmenü Einzel-/Mehrspieler und 2D/3D | `dist/index.html` (`#mode-overlay`), `applyPlayMode` in `dist/game.js` |
+| 3D-Mehrspieler für 2–5 Spieler | `dist/net3d.mjs`, `onRace3d` in `dist/game.js`, Lobby in `dist/mx-client.mjs` (Modus `3d`) |
+| 2D-Zeitfahren (Einzelspieler, 0–4 Computer-Gegner) | `startSolo`/`stepSolo` in `dist/mx-client.mjs`, `mxBotInput` und `MX_SKILLS` in `dist/mx-physics.mjs` |
 | 2D-Multiplayer für 2–5 Spieler | `dist/mx-client.mjs`, `dist/mx-physics.mjs`, `dist/mx-motion.mjs`, `dist/mx-terrain.mjs` |
 | Website und WebSocket-Rennserver | `multiplayer/server.mjs` mit `ws`, Endpunkte `/health` und `/ws` |
 | Windows-App | `desktop/main.mjs`, `scripts/build-windows.mjs`, Workflow `windows-app.yml` |
 | Android-App | `android/`, `scripts/prepare-android.mjs`, Workflow `android-apk.yml` |
 
-Die Browserdateien liegen direkt in `dist/`. Der Multiplayer-Server bestimmt Positionen, Treffer und Ergebnisse. Der Client sagt die Bewegung des eigenen Bikes voraus, gleicht sie mit dem Server ab und zeichnet Gegner zwischen empfangenen Rennständen. Kamera und eigenes Bike nutzen dieselbe gerenderte Position. Jeder Spieler sieht das eigene Bike auf der vorderen Bahn.
+Die Browserdateien liegen direkt in `dist/`. Der Multiplayer-Server bestimmt Positionen, Treffer und Ergebnisse. Der Client sagt die Bewegung des eigenen Bikes voraus, gleicht sie mit dem Server ab und zeichnet Gegner zwischen empfangenen Rennständen. Kamera und eigenes Bike nutzen dieselbe gerenderte Position. Jeder Spieler sieht das eigene Bike auf der vorderen Bahn. Im 3D-Mehrspieler fährt jeder Client sein Bike selbst und meldet 20-mal pro Sekunde seine Lage; der Server prüft die Werte, vergibt Zielzeiten und verteilt Treffer und Hupen. Strecke und Runden legt der Gastgeber in der Garage fest.
 
 Im Einzelspieler funktionieren Name, 1–10 Runden und Locker/Normal/Profi. Die mobile Steuerung im Querformat nutzt links Gas, Bremse und Lenkung, rechts Feuer und Hupe. Spotify öffnet gespeicherte Links extern. Die Spielsteuerung, das Clubradio und die getrennten Lautstärkeregler bleiben Teil des Spiels.
 
@@ -27,7 +30,7 @@ npm test
 node multiplayer/server.mjs --lan
 ```
 
-Auf dem Gastgeber `http://127.0.0.1:8787` öffnen. Andere Geräte öffnen die vom Server ausgegebene LAN-Adresse oder tragen im Windows-Client die WebSocket-Adresse des Gastgebers ein. Unter **2D MX** erstellt einer den Raum. Die übrigen treten mit dem Raumcode bei. Alle müssen dieselbe Protokollversion verwenden.
+Auf dem Gastgeber `http://127.0.0.1:8787` öffnen. Andere Geräte öffnen die vom Server ausgegebene LAN-Adresse oder tragen im Windows-Client die WebSocket-Adresse des Gastgebers ein. Beim Start wählt man Einzel- oder Mehrspieler und dann 3D oder 2D. Einzelspieler · 2D ist ein Zeitfahren im Browser ohne Server, allein oder gegen 1–4 Bots. Im Mehrspieler erstellt einer den Raum. Die übrigen treten mit dem Raumcode bei. Alle müssen dieselbe Protokollversion verwenden.
 
 Version 1.7 bestand 62 automatisierte Tests, Browserprüfungen für sechs Displaygrößen und einen Windows-Test mit fünf verbundenen Teilnehmern. Die Windows-Messung auf dem Software-Prüfrechner ergab rund 14 FPS bei rund 20 Serverständen pro Sekunde. Die Bildrate auf den PCs der Spieler ist offen. Für weitere Diagnose die FPS- und Ping-Anzeige auf beiden PCs vergleichen. Der lokale Mehrspielerzugang funktionierte über einen gemeinsamen Handy-Hotspot. Im Gast-WLAN erreichten sich die Geräte nicht.
 

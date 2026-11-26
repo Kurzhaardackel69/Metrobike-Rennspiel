@@ -51,3 +51,31 @@ test('intranet lobby joins everyone into one room without a code, first player h
   const next=await connect();next.send({type:'lobby',name:'Lena'});assert.equal((await until(next,m=>m.type==='joined')).code,lateJoined.code);assert.notEqual(otherJoined.code,lateJoined.code);
  }finally{for(const ws of sockets)ws.close();await server.close();}
 });
+
+test('3D rooms keep track settings, relay poses, hits and horns, and finish with server times',async()=>{
+ const {net3dPose,net3dSettings,net3dProxy,net3dReceive,net3dStep}=await import('../dist/net3d.mjs');
+ assert.deepEqual(net3dSettings({track:'mars',laps:99}),{track:'kart',laps:10});assert.equal(net3dPose({progress:-5,speed:1e9,finished:'yes'}).progress,0);assert.equal(net3dPose({speed:1e9}).speed,80);assert.equal(net3dPose(null).finished,false);
+ const proxy=net3dProxy({id:'x',name:'X',color:9});assert.equal(proxy.colorIndex,3);net3dReceive(proxy,{id:'x',name:'X',progress:10,speed:20},1);net3dStep(proxy,.1,1.1);assert.ok(proxy.progress>0&&proxy.progress<12);
+ const server=createMxServer({countdown:.05});const address=await server.listen(0);const sockets=[];
+ async function connect(){const ws=new WebSocket(`ws://127.0.0.1:${address.port}/ws`),messages=[];ws.addEventListener('message',e=>messages.push(JSON.parse(e.data)));sockets.push(ws);await new Promise((r,j)=>{ws.addEventListener('open',r,{once:true});ws.addEventListener('error',j,{once:true});});return {ws,messages,send:m=>ws.send(JSON.stringify(m))};}
+ async function until(c,predicate){const end=Date.now()+4000;while(Date.now()<end){const m=c.messages.find(predicate);if(m)return m;await new Promise(r=>setTimeout(r,20));}throw Error('No matching server message: '+JSON.stringify(c.messages.slice(-2)));}
+ try{const a=await connect(),b=await connect(),c=await connect(),d=await connect();
+  a.send({type:'create',mode:'3d',track:'star',laps:2,name:'Alpha',color:2});const joined=await until(a,m=>m.type==='joined');
+  d.send({type:'join',code:joined.code,name:'Zwei-D'});assert.match((await until(d,m=>m.type==='error')).message,/3D-Raum/);
+  b.send({type:'join',mode:'3d',code:joined.code,name:'Beta',color:1});c.send({type:'join',mode:'3d',code:joined.code,name:'Gamma'});
+  const waiting=await until(a,m=>m.type==='state'&&m.players.length===3);assert.equal(waiting.mode,'3d');assert.equal(waiting.track,'star');assert.equal(waiting.laps,2);assert.deepEqual(waiting.players.map(p=>p.color),[2,1,0]);
+  a.send({type:'start'});await until(b,m=>m.phase==='running');
+  b.send({type:'pose',pose:{progress:42,offset:1,speed:20}});await until(a,m=>m.type==='state'&&m.players[1]?.progress===42);
+  a.send({type:'shoot',target:waiting.players[1].id});a.send({type:'horn'});
+  await until(b,m=>m.type==='state'&&m.events.some(e=>e.type==='hit'&&e.playerId===waiting.players[1].id)&&m.events.some(e=>e.type==='horn'));
+  a.messages.length=0;c.ws.close();const still=await until(a,m=>m.type==='state'&&m.players.length===2);assert.equal(still.phase,'running');
+  a.send({type:'pose',pose:{progress:900,finished:true}});b.send({type:'pose',pose:{progress:900,finished:true}});
+  const done=await until(a,m=>m.phase==='finished');assert.ok(done.players.every(p=>p.finished&&Number.isFinite(p.finishTime)));
+ }finally{for(const ws of sockets)ws.close();await server.close();}
+});
+
+test('2D time-trial bots finish on every difficulty and harder bots are faster on average',async()=>{
+ const {mxBotInput,MX_SKILLS}=await import('../dist/mx-physics.mjs');const averages={};
+ for(const level of ['easy','normal','hard']){let total=0;for(let seed=1;seed<=3;seed++){let r=seed;const random=()=>((r=r*16807%2147483647)/2147483647);const ps=[1,2,3,4].map(i=>({...mxPlayer('b'+i,'B'+i,i),bot:true}));let t=0;while(t<200&&!ps.every(p=>p.finished)){t+=1/60;for(const p of ps)p.input=mxBotInput(p,ps,t,MX_SKILLS[level],random);updateMxRace(ps,1/60,t);}assert.ok(ps.every(p=>p.finished),level+' bots finish');total+=ps.reduce((s,p)=>s+p.finishTime,0)/ps.length;}averages[level]=total/3;}
+ assert.ok(averages.easy>averages.normal&&averages.normal>averages.hard,JSON.stringify(averages));
+});
