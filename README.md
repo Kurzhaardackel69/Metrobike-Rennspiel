@@ -11,6 +11,7 @@ Auf diesem Server soll unter einer gemeinsamen Domain ausschließlich die jeweil
 **Stand der Einrichtung:** Diese Betriebsweise ist vereinbart und dokumentiert. Eine Serveradresse wurde vom Projektinhaber benannt und antwortet per SSH. Der vorhandene SSH-Schlüssel wird noch nicht akzeptiert; der Verwaltungszugang muss zunächst freigeschaltet werden. Domain, automatische Bereitstellung, DNS und HTTPS sind noch nicht eingerichtet. Die bisherigen lokalen Testanwendungen bleiben nutzbar.
 
 Begriffe, Vorgehen und nächste Schritte stehen in [HOSTING.md](HOSTING.md).
+Die technische Übergabe für Claude steht in [CLAUDE.md](CLAUDE.md).
 
 ## Spielumfang
 
